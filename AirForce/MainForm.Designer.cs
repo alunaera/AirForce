@@ -34,22 +34,25 @@
             // 
             // gameField
             // 
-            this.gameField.Location = new System.Drawing.Point(12, 12);
+            this.gameField.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.gameField.Location = new System.Drawing.Point(0, 0);
             this.gameField.Name = "gameField";
-            this.gameField.Size = new System.Drawing.Size(1528, 766);
+            this.gameField.Size = new System.Drawing.Size(1038, 439);
             this.gameField.TabIndex = 0;
             this.gameField.TabStop = false;
+            this.gameField.Paint += new System.Windows.Forms.PaintEventHandler(this.Draw);
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1552, 790);
+            this.ClientSize = new System.Drawing.Size(1038, 439);
             this.Controls.Add(this.gameField);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.MaximizeBox = false;
             this.Name = "MainForm";
             this.Text = "AirForce";
+            this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             ((System.ComponentModel.ISupportInitialize)(this.gameField)).EndInit();
             this.ResumeLayout(false);
 
