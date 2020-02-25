@@ -47,7 +47,7 @@
             // Timer
             // 
             this.Timer.Enabled = true;
-            this.Timer.Interval = 10;
+            this.Timer.Interval = 15;
             this.Timer.Tick += new System.EventHandler(this.TickTimer);
             // 
             // MainForm
@@ -56,12 +56,14 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1038, 439);
             this.Controls.Add(this.gameField);
+            this.DoubleBuffered = true;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.MaximizeBox = false;
             this.Name = "MainForm";
             this.Text = "AirForce";
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.DownKey);
+            this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.UpKey);
             ((System.ComponentModel.ISupportInitialize)(this.gameField)).EndInit();
             this.ResumeLayout(false);
 

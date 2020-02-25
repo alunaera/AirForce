@@ -7,10 +7,11 @@ namespace AirForce
     {
         public int PositionX;
         public int PositionY;
+        public int Health;
 
         public Ship()
         {
-
+            Health = 1;
         }
 
         public void Move()

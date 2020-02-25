@@ -5,27 +5,37 @@ namespace AirForce
 {
     class PlayerShip : Ship
     {
+        public MoveMode MoveMode;
+        public int Size = 80;
+
         public PlayerShip()
         {
+            SetDefaultValue();
+        }
+
+        public void SetDefaultValue()
+        {
+            MoveMode = MoveMode.NoMove;
+            Health = 3;
             PositionX = 100;
             PositionY = 200;
         }
 
-        public void Move(Keys keyCode)
+        public new void Move()
         {
-            switch (keyCode)
+            switch (MoveMode)
             {
-                case Keys.S:
-                    this.PositionY += 5;
+                case MoveMode.Top:
+                    PositionY -= 8;
                     break;
-                case Keys.W:
-                    this.PositionY -= 5;
+                case MoveMode.Right:
+                    PositionX += 8;
                     break;
-                case Keys.A:
-                    this.PositionX -= 5;
+                case MoveMode.Down:
+                    PositionY += 8;
                     break;
-                case Keys.D:
-                    this.PositionX += 5;
+                case MoveMode.Left:
+                    PositionX -= 8;
                     break;
             }
         }

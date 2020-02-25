@@ -13,6 +13,16 @@ namespace AirForce
             InitializeComponent();
 
             gameField.Paint += Draw;
+
+            game.Defeat += () =>
+            {
+                Timer.Enabled = false;
+                MessageBox.Show("Game over");
+                game.StartGame();
+                Timer.Enabled = true;
+            };
+
+            game.StartGame();
         }
 
         private void Draw(object sender, PaintEventArgs e)
@@ -29,7 +39,22 @@ namespace AirForce
 
         private void DownKey(object sender, KeyEventArgs e)
         {
-            game.MovePlayerShip(e.KeyCode);
+            switch (e.KeyCode)
+            {
+                case Keys.W:
+                case Keys.D:
+                case Keys.S:
+                case Keys.A:
+                    game.ChangePlayerShipMoveMode(e.KeyCode);
+                 //  gameField.Refresh();
+                    break;
+            }
+        }
+
+        private void UpKey(object sender, KeyEventArgs e)
+        {
+            game.SetPlayerShipMoveModeDefaultValue();
+            gameField.Refresh();
         }
     }
 }
