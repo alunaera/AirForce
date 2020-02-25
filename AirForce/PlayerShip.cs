@@ -1,20 +1,33 @@
 ﻿using System;
-using System.Drawing;
+using System.Windows.Forms;
 
 namespace AirForce
 {
-    class PlayerShip : IMovable
+    class PlayerShip : Ship
     {
-        public Point Position { get; private set; }
-
         public PlayerShip()
         {
-            Position = new Point(50, 200);
+            PositionX = 100;
+            PositionY = 200;
         }
 
-        public void Move()
+        public void Move(Keys keyCode)
         {
-
+            switch (keyCode)
+            {
+                case Keys.S:
+                    this.PositionY += 5;
+                    break;
+                case Keys.W:
+                    this.PositionY -= 5;
+                    break;
+                case Keys.A:
+                    this.PositionX -= 5;
+                    break;
+                case Keys.D:
+                    this.PositionX += 5;
+                    break;
+            }
         }
     }
 }

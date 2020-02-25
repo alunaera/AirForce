@@ -28,7 +28,9 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.gameField = new System.Windows.Forms.PictureBox();
+            this.Timer = new System.Windows.Forms.Timer(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.gameField)).BeginInit();
             this.SuspendLayout();
             // 
@@ -42,6 +44,12 @@
             this.gameField.TabStop = false;
             this.gameField.Paint += new System.Windows.Forms.PaintEventHandler(this.Draw);
             // 
+            // Timer
+            // 
+            this.Timer.Enabled = true;
+            this.Timer.Interval = 10;
+            this.Timer.Tick += new System.EventHandler(this.TickTimer);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -53,6 +61,7 @@
             this.Name = "MainForm";
             this.Text = "AirForce";
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
+            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.DownKey);
             ((System.ComponentModel.ISupportInitialize)(this.gameField)).EndInit();
             this.ResumeLayout(false);
 
@@ -61,6 +70,7 @@
         #endregion
 
         private System.Windows.Forms.PictureBox gameField;
+        private System.Windows.Forms.Timer Timer;
     }
 }
 

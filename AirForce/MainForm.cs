@@ -20,5 +20,16 @@ namespace AirForce
             e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
             game.Draw(e.Graphics);
         }
+
+        private void TickTimer(object sender, System.EventArgs e)
+        {
+            game.Update();
+            gameField.Refresh();
+        }
+
+        private void DownKey(object sender, KeyEventArgs e)
+        {
+            game.MovePlayerShip(e.KeyCode);
+        }
     }
 }
