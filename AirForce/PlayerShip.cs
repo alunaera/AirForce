@@ -5,8 +5,8 @@ namespace AirForce
 {
     class PlayerShip : Ship
     {
-        public MoveMode MoveMode;
-        public int Size = 80;
+        private MoveMode MoveMode;
+        public int Size { get; private set; }
 
         public PlayerShip()
         {
@@ -15,10 +15,12 @@ namespace AirForce
 
         public void SetDefaultValue()
         {
-            MoveMode = MoveMode.NoMove;
-            Health = 3;
+            SetMoveModeDefaultValue();
+
             PositionX = 100;
-            PositionY = 200;
+            PositionY = 375;
+            Health = 3;
+            Size = 80;
         }
 
         public new void Move()
@@ -38,6 +40,43 @@ namespace AirForce
                     PositionX -= 8;
                     break;
             }
+
+            // Магические значения - злое зло. Исправить.
+            PositionX = PositionX + Size / 2 > 1550
+                ? 1550 - Size / 2
+                : PositionX;
+
+            PositionX = PositionX - Size / 2 < 0 
+                ? Size / 2
+                : PositionX;
+
+            PositionY = PositionY - Size / 2 < 0 
+                ? Size / 2 
+                : PositionY;
+        }
+
+        public void ChangeMoveMode(Keys keyCode)
+        {
+            switch (keyCode)
+            {
+                case Keys.W:
+                    MoveMode = MoveMode.Top;
+                    break;
+                case Keys.D:
+                    MoveMode = MoveMode.Right;
+                    break;
+                case Keys.S:
+                    MoveMode = MoveMode.Down;
+                    break;
+                case Keys.A:
+                    MoveMode = MoveMode.Left;
+                    break;
+            }
+        }
+
+        public void SetMoveModeDefaultValue()
+        {
+            MoveMode = MoveMode.NoMove;
         }
     }
 }

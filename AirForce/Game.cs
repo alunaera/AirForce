@@ -27,26 +27,12 @@ namespace AirForce
 
         public void ChangePlayerShipMoveMode(Keys keyCode)
         {
-            switch (keyCode)
-                {
-                    case Keys.W:
-                        playerShip.MoveMode = MoveMode.Top;
-                        break;
-                    case Keys.D:
-                        playerShip.MoveMode = MoveMode.Right;
-                        break;
-                    case Keys.S:
-                        playerShip.MoveMode = MoveMode.Down;
-                        break;
-                    case Keys.A:
-                        playerShip.MoveMode = MoveMode.Left;
-                        break;
-                }
+            playerShip.ChangeMoveMode(keyCode);
         }
 
         public void SetPlayerShipMoveModeDefaultValue()
         {
-            playerShip.MoveMode = MoveMode.NoMove;
+            playerShip.SetMoveModeDefaultValue();
         }
 
         public void Draw(Graphics graphics)
