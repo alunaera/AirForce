@@ -21,7 +21,7 @@ namespace AirForce
         {
             playerShip.Move();
             
-            if (playerShip.PositionY + playerShip.Size / 2 >= GroundLevel + 5)
+            if (IsDefeat())
                 Defeat();
         }
 
@@ -33,6 +33,14 @@ namespace AirForce
         public void SetPlayerShipMoveModeDefaultValue()
         {
             playerShip.SetMoveModeDefaultValue();
+        }
+
+        private bool IsDefeat()
+        {
+            if (playerShip.PositionY + playerShip.Size / 2 >= GroundLevel + 5)
+                return true;
+
+            return false;
         }
 
         public void Draw(Graphics graphics)
