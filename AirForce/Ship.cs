@@ -21,13 +21,14 @@ namespace AirForce
                 ? MaxPositionX - Size / 2
                 : PositionX;
 
-            PositionX = PositionX - Size / 2 < 0
-                ? Size / 2
-                : PositionX;
-
             PositionY = PositionY - Size / 2 < 0
                 ? Size / 2
                 : PositionY;
+        }
+
+        public void DestroyShip()
+        {
+            Health = 0;
         }
     }
 }

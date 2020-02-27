@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
 
 namespace AirForce
@@ -34,8 +35,13 @@ namespace AirForce
             foreach (EnemyShip enemyShip in enemyShipsList)
             {
                 enemyShip.Move();
+
+                if (enemyShip.PositionX <= 0)
+                    enemyShip.DestroyShip();
             }
-            
+
+            enemyShipsList.Where(enemyShip => enemyShip.Health > 0);
+
             if (IsDefeat())
                 Defeat();
         }
@@ -52,7 +58,7 @@ namespace AirForce
 
         private bool IsDefeat()
         {
-            if (playerShip.PositionY + playerShip.Size / 2 >= GroundLevel + 5)
+            if (playerShip.PositionY + playerShip.Size / 2 >= GroundLevel + 5 || playerShip.Health == 0) 
                 return true;
 
             return false;
@@ -66,21 +72,20 @@ namespace AirForce
 
         private void DrawBackground(Graphics graphics)
         {
-            // Спросить у Семена почему с картинкой падает фпс
-            // graphics.DrawImage(Properties.Resources.Ground, 0, GroundLevel);
-
-           graphics.FillRectangle(Brushes.DarkGreen, 0, GroundLevel, gameFieldWidth, 100);
+            graphics.FillRectangle(Brushes.DarkGreen, 0, GroundLevel, gameFieldWidth, 100);
         }
 
         private void DrawShips(Graphics graphics)
         {
             graphics.DrawImage(Properties.Resources.PlayerShip,
-                playerShip.PositionX - playerShip.Size / 2, playerShip.PositionY - playerShip.Size / 2, playerShip.Size, playerShip.Size);
+                playerShip.PositionX - playerShip.Size / 2, playerShip.PositionY - playerShip.Size / 2, playerShip.Size,
+                playerShip.Size);
 
             foreach (EnemyShip enemyShip in enemyShipsList)
             {
                 graphics.DrawImage(Properties.Resources.EnemyShip,
-                    enemyShip.PositionX - enemyShip.Size / 2, enemyShip.PositionY - enemyShip.Size / 2, enemyShip.Size, enemyShip.Size);
+                    enemyShip.PositionX - enemyShip.Size / 2, enemyShip.PositionY - enemyShip.Size / 2,
+                    enemyShip.Size, enemyShip.Size);
             }
         }
     }
