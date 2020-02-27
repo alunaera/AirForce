@@ -6,7 +6,6 @@ namespace AirForce
     class PlayerShip : Ship
     {
         private MoveMode MoveMode;
-        public int Size { get; private set; }
 
         public PlayerShip()
         {
@@ -41,9 +40,8 @@ namespace AirForce
                     break;
             }
 
-            // Магические значения - злое зло. Исправить.
-            PositionX = PositionX + Size / 2 > 1550
-                ? 1550 - Size / 2
+            PositionX = PositionX + Size / 2 > MaxPositionX
+                ? MaxPositionX - Size / 2
                 : PositionX;
 
             PositionX = PositionX - Size / 2 < 0 

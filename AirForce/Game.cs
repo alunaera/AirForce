@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 
@@ -8,18 +9,32 @@ namespace AirForce
     {
         private const int GroundLevel = 750;
 
+        private int gameFieldWidth;
+        private int gameFieldHeight;
+
         private readonly PlayerShip playerShip = new PlayerShip();
+        private List<EnemyShip> enemyShipsList = new List<EnemyShip>();
 
         public event Action Defeat = delegate { };
 
-        public void StartGame()
+        public void StartGame(int gameFieldWidth, int gameFieldHeight)
         {
+            this.gameFieldWidth = gameFieldWidth;
+            this.gameFieldHeight = gameFieldHeight;
+
             playerShip.SetDefaultValue();
+
+            enemyShipsList.Add(new EnemyShip(1500, 300));
         }
 
         public void Update()
         {
             playerShip.Move();
+
+            foreach (EnemyShip enemyShip in enemyShipsList)
+            {
+                enemyShip.Move();
+            }
             
             if (IsDefeat())
                 Defeat();
@@ -46,7 +61,7 @@ namespace AirForce
         public void Draw(Graphics graphics)
         {
             DrawBackground(graphics);
-            DrawPlayerShip(graphics);
+            DrawShips(graphics);
         }
 
         private void DrawBackground(Graphics graphics)
@@ -54,13 +69,19 @@ namespace AirForce
             // Спросить у Семена почему с картинкой падает фпс
             // graphics.DrawImage(Properties.Resources.Ground, 0, GroundLevel);
 
-           graphics.FillRectangle(Brushes.DarkGreen, 0, GroundLevel, 1920, 100);
+           graphics.FillRectangle(Brushes.DarkGreen, 0, GroundLevel, gameFieldWidth, 100);
         }
 
-        private void DrawPlayerShip(Graphics graphics)
+        private void DrawShips(Graphics graphics)
         {
             graphics.DrawImage(Properties.Resources.PlayerShip,
                 playerShip.PositionX - playerShip.Size / 2, playerShip.PositionY - playerShip.Size / 2, playerShip.Size, playerShip.Size);
+
+            foreach (EnemyShip enemyShip in enemyShipsList)
+            {
+                graphics.DrawImage(Properties.Resources.EnemyShip,
+                    enemyShip.PositionX - enemyShip.Size / 2, enemyShip.PositionY - enemyShip.Size / 2, enemyShip.Size, enemyShip.Size);
+            }
         }
     }
 }

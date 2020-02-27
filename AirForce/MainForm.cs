@@ -18,11 +18,11 @@ namespace AirForce
             {
                 Timer.Enabled = false;
                 MessageBox.Show("Game over");
-                game.StartGame();
+                game.StartGame(1535, 900);
                 Timer.Enabled = true;
             };
 
-            game.StartGame();
+            game.StartGame(1535, 900);
         }
 
         private void Draw(object sender, PaintEventArgs e)
