@@ -15,7 +15,7 @@ namespace AirForce
 
         public void Move()
         {
-            PositionX -= 8;
+            PositionX -= 6;
 
             PositionX = PositionX + Size / 2 > MaxPositionX
                 ? MaxPositionX - Size / 2

@@ -12,7 +12,7 @@ namespace AirForce
             SetDefaultValue();
         }
 
-        public void SetDefaultValue()
+        private void SetDefaultValue()
         {
             SetMoveModeDefaultValue();
 
@@ -76,5 +76,10 @@ namespace AirForce
         {
             MoveMode = MoveMode.NoMove;
         }
+
+        public void TakeDamage()
+        {
+            Health--;
+        } 
     }
 }
