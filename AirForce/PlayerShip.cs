@@ -77,9 +77,14 @@ namespace AirForce
             MoveMode = MoveMode.NoMove;
         }
 
-        public void TakeDamage()
+        public void TakeDamage<T>(T damageSource)
         {
-            Health--;
+            switch (damageSource.GetType().ToString())
+            {
+                case "AirForce.EnemyShip":
+                    Health--;
+                    break;
+            }
         } 
     }
 }

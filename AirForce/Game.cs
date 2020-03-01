@@ -10,9 +10,10 @@ namespace AirForce
     {
         private const int GroundLevel = 750;
 
+        private static readonly Random random = new Random();
+
         private int gameFieldWidth;
         private int gameFieldHeight;
-
         private PlayerShip playerShip;
         private List<EnemyShip> enemyShipsList;
 
@@ -49,7 +50,8 @@ namespace AirForce
 
                     if (distanceToPlayerShip >= playerShip.Size / 2 + enemyShip.Size / 2)
                         continue;
-                    playerShip.TakeDamage();
+
+                    playerShip.TakeDamage(enemyShip);
                     enemyShip.DestroyShip();
                 }
                 else
@@ -61,6 +63,9 @@ namespace AirForce
 
             if (IsDefeat())
                 Defeat();
+
+            if(enemyShipsList.Count == 0)
+                GenerateEnemies();
         }
 
         public void ChangePlayerShipMoveMode(Keys keyCode)
@@ -71,6 +76,11 @@ namespace AirForce
         public void SetPlayerShipMoveModeDefaultValue()
         {
             playerShip.SetMoveModeDefaultValue();
+        }
+
+        private void GenerateEnemies()
+        {
+            enemyShipsList.Add(new EnemyShip(1500, random.Next(100, 500)));
         }
 
         private int GetVectorLength(int startX, int startY, int finishX, int finishY)

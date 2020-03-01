@@ -46,6 +46,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Bird.cs" />
     <Compile Include="EnemyShip.cs" />
     <Compile Include="MoveMode.cs" />
     <Compile Include="Game.cs" />
