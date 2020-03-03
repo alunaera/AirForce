@@ -15,6 +15,7 @@ namespace AirForce
         private int gameFieldWidth;
         private int gameFieldHeight;
         private PlayerShip playerShip;
+        private Ground ground;
         private List<EnemyShip> enemyShipsList;
 
         public event Action Defeat = delegate { };
@@ -25,6 +26,7 @@ namespace AirForce
             this.gameFieldHeight = gameFieldHeight;
 
             playerShip = new PlayerShip();
+            ground = new Ground();
             enemyShipsList = new List<EnemyShip>();
 
             enemyShipsList.Add(new EnemyShip(1500, 300));
@@ -32,8 +34,8 @@ namespace AirForce
 
         public void Update()
         {
-            playerShip.Move();
-
+            MovePlayerShip();
+            
             for (var i = 0; i < enemyShipsList.Count; i++)
             {
                 EnemyShip enemyShip = enemyShipsList[i];
@@ -42,17 +44,14 @@ namespace AirForce
                 {
                     enemyShip.Move();
 
-                    if (enemyShip.PositionX <= 0)
+                    if (enemyShip.PositionX + enemyShip.Size < 0)
                         enemyShip.DestroyShip();
 
-                    int distanceToPlayerShip = GetVectorLength(playerShip.PositionX, playerShip.PositionY,
-                        enemyShip.PositionX, enemyShip.PositionY);
-
-                    if (distanceToPlayerShip >= playerShip.Size / 2 + enemyShip.Size / 2)
-                        continue;
-
-                    playerShip.TakeDamage(enemyShip);
-                    enemyShip.DestroyShip();
+                    if (enemyShip.IsIntersectionWithPlayerShip(playerShip))
+                    {
+                        playerShip.TakeDamage<EnemyShip>();
+                        enemyShip.TakeDamage<PlayerShip>();
+                    }
                 }
                 else
                 {
@@ -66,6 +65,14 @@ namespace AirForce
 
             if(enemyShipsList.Count == 0)
                 GenerateEnemies();
+        }
+
+        private void MovePlayerShip()
+        {
+            playerShip.Move();
+
+            if (playerShip.PositionY + playerShip.Size / 2 >= GroundLevel + 5)
+                playerShip.TakeDamage<Ground>();
         }
 
         public void ChangePlayerShipMoveMode(Keys keyCode)
@@ -83,20 +90,9 @@ namespace AirForce
             enemyShipsList.Add(new EnemyShip(1500, random.Next(100, 500)));
         }
 
-        private int GetVectorLength(int startX, int startY, int finishX, int finishY)
-        {
-            double componentX = Math.Pow(finishX - startX, 2);
-            double componentY = Math.Pow(finishY - startY, 2);
-
-            return  (int)Math.Sqrt(componentX + componentY);
-        } 
-
         private bool IsDefeat()
         {
-            if (playerShip.PositionY + playerShip.Size / 2 < GroundLevel + 5 && playerShip.Health > 0) 
-                return false;
-
-            return true;
+            return playerShip.Health < 1;
         }
 
         public void Draw(Graphics graphics)

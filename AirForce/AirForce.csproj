@@ -48,6 +48,7 @@
   <ItemGroup>
     <Compile Include="Bird.cs" />
     <Compile Include="EnemyShip.cs" />
+    <Compile Include="Ground.cs" />
     <Compile Include="MoveMode.cs" />
     <Compile Include="Game.cs" />
     <Compile Include="IMovable.cs" />

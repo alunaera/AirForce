@@ -31,7 +31,7 @@ namespace AirForce
             Health = 0;
         }
 
-        private int GetDistanceToObject(int objectX, int objectY)
+        protected int GetDistanceToObject(int objectX, int objectY)
         {
             double componentX = Math.Pow(PositionX - objectX, 2);
             double componentY = Math.Pow(PositionY - objectY, 2);

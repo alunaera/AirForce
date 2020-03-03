@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Windows.Forms;
 
 namespace AirForce
@@ -77,12 +78,15 @@ namespace AirForce
             MoveMode = MoveMode.NoMove;
         }
 
-        public void TakeDamage<T>(T damageSource)
+        public void TakeDamage<T>()
         {
-            switch (damageSource.GetType().ToString())
+            switch (typeof(T).ToString())
             {
                 case "AirForce.EnemyShip":
                     Health--;
+                    break;
+                case "AirForce.Ground":
+                    DestroyShip();
                     break;
             }
         } 
