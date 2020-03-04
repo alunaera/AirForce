@@ -97,11 +97,11 @@ namespace AirForce
                     if (meteor.IsIntersection(playerShip.PositionX, playerShip.PositionY, playerShip.Size))
                         playerShip.TakeDamage<ChaserShip>();
 
-                    var intersectedEnemyShips = enemyShipsList.Where(enemyShip =>
-                        meteor.IsIntersection(enemyShip.PositionX, enemyShip.PositionY, enemyShip.Size));
+                    var intersectedEnemyShips = enemyShipsList.Where(chaserShip =>
+                        meteor.IsIntersection(chaserShip.PositionX, chaserShip.PositionY, chaserShip.Size));
 
-                    foreach (var enemyShip in intersectedEnemyShips)
-                        enemyShip.TakeDamage<Meteor>();
+                    foreach (ChaserShip chaserShip in intersectedEnemyShips)
+                        chaserShip.TakeDamage<Meteor>();
                 }
                 else
                 {
