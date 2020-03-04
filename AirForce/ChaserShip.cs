@@ -1,8 +1,8 @@
 ﻿namespace AirForce
 {
-    class EnemyShip : Ship
+    internal class ChaserShip : Ship
     {
-        public EnemyShip(int positionX, int positionY)
+        public ChaserShip(int positionX, int positionY)
         {
             PositionX = positionX;
             PositionY = positionY;
@@ -10,9 +10,9 @@
             Size = 80;
         }
 
-        public bool IsIntersectionWithPlayerShip(PlayerShip playerShip)
+        public bool IsIntersection(int positionX, int positionY, int size)
         {
-            return GetDistanceToObject(playerShip.PositionX, playerShip.PositionY) <= (Size + playerShip.Size) / 2;
+            return GetDistanceToObject(positionX, positionY) <= (Size + size) / 2;
         }
 
         public void TakeDamage<T>()

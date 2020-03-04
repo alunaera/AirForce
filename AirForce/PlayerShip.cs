@@ -80,7 +80,7 @@ namespace AirForce
         {
             switch (typeof(T).ToString())
             {
-                case "AirForce.EnemyShip":
+                case "AirForce.ChaserShip":
                 case "AirForce.BigShip":
                 case "AirForce.Bird":
                     Health--;

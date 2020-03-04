@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
 
 namespace AirForce
@@ -14,7 +15,7 @@ namespace AirForce
         private int gameFieldWidth;
         private int gameFieldHeight;
         private PlayerShip playerShip;
-        private List<EnemyShip> enemyShipsList;
+        private List<ChaserShip> enemyShipsList;
         private List<Meteor> meteorsList;
 
 
@@ -26,39 +27,17 @@ namespace AirForce
             this.gameFieldHeight = gameFieldHeight;
 
             playerShip = new PlayerShip();
-            enemyShipsList = new List<EnemyShip>();
+            enemyShipsList = new List<ChaserShip>();
             meteorsList = new List<Meteor>();
 
-            enemyShipsList.Add(new EnemyShip(1500, 300));
+            enemyShipsList.Add(new ChaserShip(1500, 300));
         }
 
         public void Update()
         {
             MovePlayerShip();
-            
-            for (var i = 0; i < enemyShipsList.Count; i++)
-            {
-                EnemyShip enemyShip = enemyShipsList[i];
-
-                if (enemyShip.Health > 0)
-                {
-                    enemyShip.Move();
-
-                    if (enemyShip.PositionX + enemyShip.Size < 0)
-                        enemyShip.DestroyShip();
-
-                    if (enemyShip.IsIntersectionWithPlayerShip(playerShip))
-                    {
-                        playerShip.TakeDamage<EnemyShip>();
-                        enemyShip.TakeDamage<PlayerShip>();
-                    }
-                }
-                else
-                {
-                    enemyShipsList.RemoveAt(i);
-                    i--;
-                }
-            }
+            MoveChaserShips();
+            MoveMeteors();
 
             if (IsDefeat())
                 Defeat();
@@ -73,6 +52,63 @@ namespace AirForce
 
             if (playerShip.PositionY + playerShip.Size / 2 >= GroundLevel + 5)
                 playerShip.TakeDamage<Ground>();
+        }
+
+        private void MoveChaserShips()
+        {
+            for (var i = 0; i < enemyShipsList.Count; i++)
+            {
+                ChaserShip chaserShip = enemyShipsList[i];
+
+                if (chaserShip.Health > 0)
+                {
+                    chaserShip.Move();
+
+                    if (chaserShip.PositionX + chaserShip.Size < 0)
+                        chaserShip.DestroyShip();
+
+                    if (chaserShip.IsIntersection(playerShip.PositionX, playerShip.PositionY, playerShip.Size))
+                    {
+                        playerShip.TakeDamage<ChaserShip>();
+                        chaserShip.TakeDamage<PlayerShip>();
+                    }
+                }
+                else
+                {
+                    enemyShipsList.RemoveAt(i);
+                    i--;
+                }
+            }
+        }
+
+        private void MoveMeteors()
+        {
+            for (var i = 0; i < meteorsList.Count; i++)
+            {
+                Meteor meteor = meteorsList[i];
+
+                if (meteor.Health > 0)
+                {
+                    meteor.Move();
+
+                    if (meteor.PositionX + meteor.Size < 0)
+                        meteor.Destroy();
+
+                    if (meteor.IsIntersection(playerShip.PositionX, playerShip.PositionY, playerShip.Size))
+                        playerShip.TakeDamage<ChaserShip>();
+
+                    var intersectedEnemyShips = enemyShipsList.Where(enemyShip =>
+                        meteor.IsIntersection(enemyShip.PositionX, enemyShip.PositionY, enemyShip.Size));
+
+                    foreach (var enemyShip in intersectedEnemyShips)
+                        enemyShip.TakeDamage<Meteor>();
+                }
+                else
+                {
+                    meteorsList.RemoveAt(i);
+                    i--;
+                }
+            }
         }
 
         public void ChangePlayerShipMoveMode(Keys keyCode)
@@ -90,7 +126,7 @@ namespace AirForce
             switch (random.Next(1, 3))
             {
                 case 1:
-                    enemyShipsList.Add(new EnemyShip(1500, random.Next(100, 500)));
+                    enemyShipsList.Add(new ChaserShip(1500, random.Next(100, 500)));
                     break;
                 case 2:
                     meteorsList.Add(new Meteor(random.Next(1400, 1500), 0));
@@ -121,9 +157,9 @@ namespace AirForce
                 playerShip.PositionX - playerShip.Size / 2, playerShip.PositionY - playerShip.Size / 2, playerShip.Size,
                 playerShip.Size);
 
-            foreach (EnemyShip enemyShip in enemyShipsList)
+            foreach (ChaserShip enemyShip in enemyShipsList)
             {
-                graphics.DrawImage(Properties.Resources.EnemyShip,
+                graphics.DrawImage(Properties.Resources.ChaserShip,
                     enemyShip.PositionX - enemyShip.Size / 2, enemyShip.PositionY - enemyShip.Size / 2,
                     enemyShip.Size, enemyShip.Size);
             }
