@@ -1,5 +1,4 @@
-﻿using System.Deployment.Application;
-using System.Drawing.Drawing2D;
+﻿using System.Drawing.Drawing2D;
 using System.Windows.Forms;
 
 namespace AirForce

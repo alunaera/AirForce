@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Drawing;
 
 namespace AirForce
 {
@@ -20,10 +19,6 @@ namespace AirForce
             PositionX = PositionX + Size / 2 > MaxPositionX
                 ? MaxPositionX - Size / 2
                 : PositionX;
-
-            PositionY = PositionY - Size / 2 < 0
-                ? Size / 2
-                : PositionY;
         }
 
         public void DestroyShip()

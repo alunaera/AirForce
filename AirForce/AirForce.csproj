@@ -49,6 +49,7 @@
     <Compile Include="Bird.cs" />
     <Compile Include="EnemyShip.cs" />
     <Compile Include="Ground.cs" />
+    <Compile Include="Meteor.cs" />
     <Compile Include="MoveMode.cs" />
     <Compile Include="Game.cs" />
     <Compile Include="IMovable.cs" />
@@ -99,6 +100,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\chaser_ship.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Meteor.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

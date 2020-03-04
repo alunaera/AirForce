@@ -1,6 +1,4 @@
-﻿using System;
-using System.Linq;
-using System.Windows.Forms;
+﻿using System.Windows.Forms;
 
 namespace AirForce
 {
@@ -83,9 +81,12 @@ namespace AirForce
             switch (typeof(T).ToString())
             {
                 case "AirForce.EnemyShip":
+                case "AirForce.BigShip":
+                case "AirForce.Bird":
                     Health--;
                     break;
                 case "AirForce.Ground":
+                case "AirForce.Meteor":
                     DestroyShip();
                     break;
             }

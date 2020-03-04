@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace AirForce
+﻿namespace AirForce
 {
     class EnemyShip : Ship
     {
@@ -29,6 +23,7 @@ namespace AirForce
                     DestroyShip();
                     break;
                 case "AirForce.Ground":
+                case "AirForce.Meteor":
                     DestroyShip();
                     break;
             }

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
 using System.Windows.Forms;
 
 namespace AirForce
@@ -15,8 +14,9 @@ namespace AirForce
         private int gameFieldWidth;
         private int gameFieldHeight;
         private PlayerShip playerShip;
-        private Ground ground;
         private List<EnemyShip> enemyShipsList;
+        private List<Meteor> meteorsList;
+
 
         public event Action Defeat = delegate { };
 
@@ -26,8 +26,8 @@ namespace AirForce
             this.gameFieldHeight = gameFieldHeight;
 
             playerShip = new PlayerShip();
-            ground = new Ground();
             enemyShipsList = new List<EnemyShip>();
+            meteorsList = new List<Meteor>();
 
             enemyShipsList.Add(new EnemyShip(1500, 300));
         }
@@ -87,7 +87,15 @@ namespace AirForce
 
         private void GenerateEnemies()
         {
-            enemyShipsList.Add(new EnemyShip(1500, random.Next(100, 500)));
+            switch (random.Next(1, 3))
+            {
+                case 1:
+                    enemyShipsList.Add(new EnemyShip(1500, random.Next(100, 500)));
+                    break;
+                case 2:
+                    meteorsList.Add(new Meteor(random.Next(1400, 1500), 0));
+                    break;
+            }
         }
 
         private bool IsDefeat()
@@ -99,6 +107,7 @@ namespace AirForce
         {
             DrawBackground(graphics);
             DrawShips(graphics);
+            DrawMeteors(graphics);
         }
 
         private void DrawBackground(Graphics graphics)
@@ -118,6 +127,16 @@ namespace AirForce
                     enemyShip.PositionX - enemyShip.Size / 2, enemyShip.PositionY - enemyShip.Size / 2,
                     enemyShip.Size, enemyShip.Size);
             }
+        }
+
+        private void DrawMeteors(Graphics graphics)
+        {
+            foreach (var meteor in meteorsList)
+            {
+                graphics.DrawImage(Properties.Resources.Meteor, meteor.PositionX - meteor.Size / 2, meteor.PositionY - meteor.Size / 2,
+                    meteor.Size, meteor.Size);
+            }
+
         }
     }
 }
