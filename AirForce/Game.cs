@@ -15,9 +15,8 @@ namespace AirForce
         private int gameFieldWidth;
         private int gameFieldHeight;
         private PlayerShip playerShip;
-        private List<ChaserShip> enemyShipsList;
+        private List<ChaserShip> chaserShipsList;
         private List<Meteor> meteorsList;
-
 
         public event Action Defeat = delegate { };
 
@@ -27,10 +26,10 @@ namespace AirForce
             this.gameFieldHeight = gameFieldHeight;
 
             playerShip = new PlayerShip();
-            enemyShipsList = new List<ChaserShip>();
+            chaserShipsList = new List<ChaserShip>();
             meteorsList = new List<Meteor>();
 
-            enemyShipsList.Add(new ChaserShip(1500, 300));
+            chaserShipsList.Add(new ChaserShip(1500, 300));
         }
 
         public void Update()
@@ -42,7 +41,7 @@ namespace AirForce
             if (IsDefeat())
                 Defeat();
 
-            if(enemyShipsList.Count == 0)
+            if (chaserShipsList.Count + meteorsList.Count == 0)
                 GenerateEnemies();
         }
 
@@ -56,9 +55,9 @@ namespace AirForce
 
         private void MoveChaserShips()
         {
-            for (var i = 0; i < enemyShipsList.Count; i++)
+            for (var i = 0; i < chaserShipsList.Count; i++)
             {
-                ChaserShip chaserShip = enemyShipsList[i];
+                ChaserShip chaserShip = chaserShipsList[i];
 
                 if (chaserShip.Health > 0)
                 {
@@ -75,7 +74,7 @@ namespace AirForce
                 }
                 else
                 {
-                    enemyShipsList.RemoveAt(i);
+                    chaserShipsList.RemoveAt(i);
                     i--;
                 }
             }
@@ -97,7 +96,7 @@ namespace AirForce
                     if (meteor.IsIntersection(playerShip.PositionX, playerShip.PositionY, playerShip.Size))
                         playerShip.TakeDamage<ChaserShip>();
 
-                    var intersectedEnemyShips = enemyShipsList.Where(chaserShip =>
+                    var intersectedEnemyShips = chaserShipsList.Where(chaserShip =>
                         meteor.IsIntersection(chaserShip.PositionX, chaserShip.PositionY, chaserShip.Size));
 
                     foreach (ChaserShip chaserShip in intersectedEnemyShips)
@@ -126,7 +125,7 @@ namespace AirForce
             switch (random.Next(1, 3))
             {
                 case 1:
-                    enemyShipsList.Add(new ChaserShip(1500, random.Next(100, 500)));
+                    chaserShipsList.Add(new ChaserShip(1500, random.Next(100, 500)));
                     break;
                 case 2:
                     meteorsList.Add(new Meteor(random.Next(1400, 1500), 0));
@@ -148,31 +147,28 @@ namespace AirForce
 
         private void DrawBackground(Graphics graphics)
         {
+            graphics.FillRectangle(Brushes.LightBlue, 0, 0, gameFieldWidth, gameFieldHeight);
             graphics.FillRectangle(Brushes.DarkGreen, 0, GroundLevel, gameFieldWidth, 100);
         }
 
         private void DrawShips(Graphics graphics)
         {
             graphics.DrawImage(Properties.Resources.PlayerShip,
-                playerShip.PositionX - playerShip.Size / 2, playerShip.PositionY - playerShip.Size / 2, playerShip.Size,
-                playerShip.Size);
+                             playerShip.PositionX - playerShip.Size / 2, playerShip.PositionY - playerShip.Size / 2,
+                          playerShip.Size,  playerShip.Size);
 
-            foreach (ChaserShip enemyShip in enemyShipsList)
-            {
+            foreach (ChaserShip chaserShip in chaserShipsList)
                 graphics.DrawImage(Properties.Resources.ChaserShip,
-                    enemyShip.PositionX - enemyShip.Size / 2, enemyShip.PositionY - enemyShip.Size / 2,
-                    enemyShip.Size, enemyShip.Size);
-            }
+                                 chaserShip.PositionX - chaserShip.Size / 2, chaserShip.PositionY - chaserShip.Size / 2,
+                              chaserShip.Size, chaserShip.Size);
         }
 
         private void DrawMeteors(Graphics graphics)
         {
             foreach (var meteor in meteorsList)
-            {
-                graphics.DrawImage(Properties.Resources.Meteor, meteor.PositionX - meteor.Size / 2, meteor.PositionY - meteor.Size / 2,
-                    meteor.Size, meteor.Size);
-            }
-
+                graphics.DrawImage(Properties.Resources.Meteor, meteor.PositionX - meteor.Size / 2,
+                                 meteor.PositionY - meteor.Size / 2,
+                                 meteor.Size, meteor.Size);
         }
     }
 }
