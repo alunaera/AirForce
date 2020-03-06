@@ -17,6 +17,7 @@ namespace AirForce
         private PlayerShip playerShip;
         private List<ChaserShip> chaserShipsList;
         private List<Meteor> meteorsList;
+        private List<Bird> birdsList;
 
         public event Action Defeat = delegate { };
 
@@ -28,6 +29,7 @@ namespace AirForce
             playerShip = new PlayerShip();
             chaserShipsList = new List<ChaserShip>();
             meteorsList = new List<Meteor>();
+            birdsList = new List<Bird>();
 
             chaserShipsList.Add(new ChaserShip(1500, 300));
         }
@@ -37,12 +39,16 @@ namespace AirForce
             MovePlayerShip();
             MoveChaserShips();
             MoveMeteors();
+            MoveBirds();
 
             if (IsDefeat())
                 Defeat();
 
             if (chaserShipsList.Count + meteorsList.Count == 0)
                 GenerateEnemies();
+
+            if (birdsList.Count == 0)
+                birdsList.Add(new Bird(random.Next(1400, 1500), random.Next(0, GroundLevel - 20)));
         }
 
         private void MovePlayerShip()
@@ -55,7 +61,7 @@ namespace AirForce
 
         private void MoveChaserShips()
         {
-            for (var i = 0; i < chaserShipsList.Count; i++)
+            for (int i = 0; i < chaserShipsList.Count; i++)
             {
                 ChaserShip chaserShip = chaserShipsList[i];
 
@@ -82,7 +88,7 @@ namespace AirForce
 
         private void MoveMeteors()
         {
-            for (var i = 0; i < meteorsList.Count; i++)
+            for (int i = 0; i < meteorsList.Count; i++)
             {
                 Meteor meteor = meteorsList[i];
 
@@ -105,6 +111,33 @@ namespace AirForce
                 else
                 {
                     meteorsList.RemoveAt(i);
+                    i--;
+                }
+            }
+        }
+
+        private void MoveBirds()
+        {
+            for (int i = 0; i < birdsList.Count; i++)
+            {
+                Bird bird = birdsList[i];
+
+                if (bird.Health > 0)
+                {
+                    bird.Move();
+
+                    if (bird.PositionX + bird.Size < 0)
+                        bird.DestroyBird();
+
+                    if (bird.IsIntersection(playerShip.PositionX, playerShip.PositionY, playerShip.Size))
+                    {
+                        playerShip.TakeDamage<Bird>();
+                        bird.TakeDamage<PlayerShip>();
+                    }
+                }
+                else
+                {
+                    birdsList.RemoveAt(i);
                     i--;
                 }
             }
@@ -143,6 +176,7 @@ namespace AirForce
             DrawBackground(graphics);
             DrawShips(graphics);
             DrawMeteors(graphics);
+            DrawBirds(graphics);
         }
 
         private void DrawBackground(Graphics graphics)
@@ -165,10 +199,18 @@ namespace AirForce
 
         private void DrawMeteors(Graphics graphics)
         {
-            foreach (var meteor in meteorsList)
+            foreach (Meteor meteor in meteorsList)
                 graphics.DrawImage(Properties.Resources.Meteor, meteor.PositionX - meteor.Size / 2,
                                  meteor.PositionY - meteor.Size / 2,
-                                 meteor.Size, meteor.Size);
+                              meteor.Size, meteor.Size);
+        }
+
+        private void DrawBirds(Graphics graphics)
+        {
+            foreach (var bird in birdsList)
+                graphics.DrawImage(Properties.Resources.Bird, bird.PositionX - bird.Size / 2,
+                                    bird.PositionY - bird.Size / 2,
+                                    bird.Size, bird.Size);
         }
     }
 }
