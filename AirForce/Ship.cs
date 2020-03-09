@@ -2,15 +2,10 @@
 
 namespace AirForce
 {
-    class Ship : IMovable
+    class Ship : ObjectOnGameField
     {
         // Магические значения - злое зло. Исправить.
         protected const int MaxPositionX = 1535;
-
-        public int Size { get; protected set; }
-        public int PositionX { get; protected set; }
-        public int PositionY { get; protected set; }
-        public int Health { get; protected set; }
 
         public void Move()
         {
@@ -24,14 +19,6 @@ namespace AirForce
         public void DestroyShip()
         {
             Health = 0;
-        }
-
-        protected int GetDistanceToObject(int objectX, int objectY)
-        {
-            double componentX = Math.Pow(PositionX - objectX, 2);
-            double componentY = Math.Pow(PositionY - objectY, 2);
-
-            return (int)Math.Sqrt(componentX + componentY);
         }
     }
 }

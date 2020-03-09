@@ -8,17 +8,18 @@ namespace AirForce
 
         public PlayerShip()
         {
+            TypeOfObject = TypeOfObject.PlayerShip;
             SetDefaultValue();
         }
 
         private void SetDefaultValue()
         {
-            SetMoveModeDefaultValue();
-
             PositionX = 100;
             PositionY = 375;
             Health = 3;
             Size = 80;
+
+            SetMoveModeDefaultValue();
         }
 
         public new void Move()

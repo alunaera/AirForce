@@ -2,15 +2,11 @@
 
 namespace AirForce
 {
-    internal class Bird : IMovable
+    internal class Bird : ObjectOnGameField
     {
-        public int PositionX;
-        public int PositionY;
-        public int Health;
-        public int Size;
-
         public Bird(int positionX, int positionY)
         {
+            TypeOfObject = TypeOfObject.Bird;
             PositionX = positionX;
             PositionY = positionY;
             Health = 1;
@@ -31,19 +27,6 @@ namespace AirForce
         public void DestroyBird()
         {
             Health = 0;
-        }
-
-        public bool IsIntersection(int positionX, int positionY, int size)
-        {
-            return GetDistanceToObject(positionX, positionY) <= (Size + size) / 2;
-        }
-
-        private int GetDistanceToObject(int objectX, int objectY)
-        {
-            double componentX = Math.Pow(PositionX - objectX, 2);
-            double componentY = Math.Pow(PositionY - objectY, 2);
-
-            return (int)Math.Sqrt(componentX + componentY);
         }
     }
 }

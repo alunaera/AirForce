@@ -8,16 +8,16 @@ namespace AirForce
 {
     internal class Game
     {
-        private const int GroundLevel = 750;
-
         private static readonly Random random = new Random();
 
         private int gameFieldWidth;
         private int gameFieldHeight;
         private PlayerShip playerShip;
+        private Ground ground;
         private List<ChaserShip> chaserShipsList;
         private List<Meteor> meteorsList;
         private List<Bird> birdsList;
+        private List<ObjectOnGameField> objectsOnGameFieldList;
 
         public event Action Defeat = delegate { };
 
@@ -27,6 +27,7 @@ namespace AirForce
             this.gameFieldHeight = gameFieldHeight;
 
             playerShip = new PlayerShip();
+            ground = new Ground();
             chaserShipsList = new List<ChaserShip>();
             meteorsList = new List<Meteor>();
             birdsList = new List<Bird>();
@@ -48,14 +49,14 @@ namespace AirForce
                 GenerateEnemies();
 
             if (birdsList.Count == 0)
-                birdsList.Add(new Bird(random.Next(1400, 1500), random.Next(0, GroundLevel - 20)));
+                birdsList.Add(new Bird(random.Next(1400, 1500), random.Next(0, ground.PositionY - 20)));
         }
 
         private void MovePlayerShip()
         {
             playerShip.Move();
 
-            if (playerShip.PositionY + playerShip.Size / 2 >= GroundLevel + 5)
+            if (playerShip.PositionY + playerShip.Size / 2 >= ground.PositionY + 5)
                 playerShip.TakeDamage<Ground>();
         }
 
@@ -182,7 +183,7 @@ namespace AirForce
         private void DrawBackground(Graphics graphics)
         {
             graphics.FillRectangle(Brushes.LightBlue, 0, 0, gameFieldWidth, gameFieldHeight);
-            graphics.FillRectangle(Brushes.DarkGreen, 0, GroundLevel, gameFieldWidth, 100);
+            graphics.FillRectangle(Brushes.DarkGreen, ground.PositionX, ground.PositionY, gameFieldWidth, 100);
         }
 
         private void DrawShips(Graphics graphics)

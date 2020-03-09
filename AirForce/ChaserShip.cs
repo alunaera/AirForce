@@ -4,15 +4,11 @@
     {
         public ChaserShip(int positionX, int positionY)
         {
+            TypeOfObject = TypeOfObject.ChaserShip;
             PositionX = positionX;
             PositionY = positionY;
             Health = 1;
             Size = 80;
-        }
-
-        public bool IsIntersection(int positionX, int positionY, int size)
-        {
-            return GetDistanceToObject(positionX, positionY) <= (Size + size) / 2;
         }
 
         public void TakeDamage<T>()

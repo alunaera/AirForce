@@ -73,6 +73,16 @@ namespace AirForce.Properties {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap BomberShip {
+            get {
+                object obj = ResourceManager.GetObject("BomberShip", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap ChaserShip {
             get {
                 object obj = ResourceManager.GetObject("ChaserShip", resourceCulture);

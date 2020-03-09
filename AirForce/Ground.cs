@@ -7,8 +7,13 @@ using System.Threading.Tasks;
 
 namespace AirForce
 {
-    class Ground
+    class Ground : ObjectOnGameField
     {
-        public int PositionY = 750;
+        public Ground()
+        {
+            TypeOfObject = TypeOfObject.Ground;
+            PositionX = 0;
+            PositionY = 750;
+        }
     }
 }
