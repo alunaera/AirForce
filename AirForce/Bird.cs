@@ -6,7 +6,7 @@ namespace AirForce
     {
         public Bird(int positionX, int positionY)
         {
-            TypeOfObject = TypeOfObject.Bird;
+            ObjectType = ObjectType.Bird;
             PositionX = positionX;
             PositionY = positionY;
             Health = 1;

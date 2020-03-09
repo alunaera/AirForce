@@ -189,29 +189,97 @@ namespace AirForce
         private void DrawShips(Graphics graphics)
         {
             graphics.DrawImage(Properties.Resources.PlayerShip,
-                             playerShip.PositionX - playerShip.Size / 2, playerShip.PositionY - playerShip.Size / 2,
-                          playerShip.Size,  playerShip.Size);
+                playerShip.PositionX - playerShip.Size / 2, playerShip.PositionY - playerShip.Size / 2,
+                playerShip.Size, playerShip.Size);
 
             foreach (ChaserShip chaserShip in chaserShipsList)
                 graphics.DrawImage(Properties.Resources.ChaserShip,
-                                 chaserShip.PositionX - chaserShip.Size / 2, chaserShip.PositionY - chaserShip.Size / 2,
-                              chaserShip.Size, chaserShip.Size);
+                    chaserShip.PositionX - chaserShip.Size / 2, chaserShip.PositionY - chaserShip.Size / 2,
+                    chaserShip.Size, chaserShip.Size);
         }
 
         private void DrawMeteors(Graphics graphics)
         {
             foreach (Meteor meteor in meteorsList)
                 graphics.DrawImage(Properties.Resources.Meteor, meteor.PositionX - meteor.Size / 2,
-                                 meteor.PositionY - meteor.Size / 2,
-                              meteor.Size, meteor.Size);
+                    meteor.PositionY - meteor.Size / 2,
+                    meteor.Size, meteor.Size);
         }
 
         private void DrawBirds(Graphics graphics)
         {
-            foreach (var bird in birdsList)
+            foreach (Bird bird in birdsList)
                 graphics.DrawImage(Properties.Resources.Bird, bird.PositionX - bird.Size / 2,
-                                    bird.PositionY - bird.Size / 2,
-                                    bird.Size, bird.Size);
+                    bird.PositionY - bird.Size / 2,
+                    bird.Size, bird.Size);
+        }
+
+        private readonly Dictionary<ObjectType, Dictionary<ObjectType, bool>> intersectTable =  new Dictionary<ObjectType, Dictionary<ObjectType, bool>>
+            {
+                {
+                    ObjectType.PlayerShip, new Dictionary<ObjectType, bool>
+                    {
+                        [ObjectType.ChaserShip] = true,
+                        [ObjectType.BomberShip] = true,
+                        [ObjectType.Meteor] = true,
+                        [ObjectType.Bird] = true,
+                        [ObjectType.Ground] = true
+
+                    }
+                },
+
+                {
+                    ObjectType.ChaserShip, new Dictionary<ObjectType, bool>
+                    {
+                        [ObjectType.PlayerShip] = true,
+                        [ObjectType.BomberShip] = false,
+                        [ObjectType.Meteor] = true,
+                        [ObjectType.Bird] = false,
+                        [ObjectType.Ground] = true
+
+                    }
+                },
+
+                {
+                    ObjectType.BomberShip, new Dictionary<ObjectType, bool>
+                    {
+                        [ObjectType.PlayerShip] = true,
+                        [ObjectType.ChaserShip] = false,
+                        [ObjectType.Meteor] = true,
+                        [ObjectType.Bird] = false,
+                        [ObjectType.Ground] = true
+
+                    }
+                },
+
+                {
+                    ObjectType.Meteor, new Dictionary<ObjectType, bool>
+                    {
+                        [ObjectType.PlayerShip] = true,
+                        [ObjectType.ChaserShip] = true,
+                        [ObjectType.BomberShip] = true,
+                        [ObjectType.Bird] = false,
+                        [ObjectType.Ground] = true
+
+                    }
+                },
+
+                {
+                    ObjectType.Bird, new Dictionary<ObjectType, bool>
+                    {
+                        [ObjectType.PlayerShip] = true,
+                        [ObjectType.ChaserShip] = false,
+                        [ObjectType.BomberShip] = false,
+                        [ObjectType.Meteor] = false,
+                        [ObjectType.Ground] = false
+
+                    }
+                }
+            };
+
+        public bool IsDamaged(ObjectOnGameField firstObjectOnGame, ObjectOnGameField secondObjectOnGameField)
+        {
+            return intersectTable[firstObjectOnGame.ObjectType][secondObjectOnGameField.ObjectType];
         }
     }
 }

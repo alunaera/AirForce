@@ -1,6 +1,6 @@
 ﻿namespace AirForce
 {
-    internal enum TypeOfObject
+    internal enum ObjectType
     {
         PlayerShip,
         ChaserShip,

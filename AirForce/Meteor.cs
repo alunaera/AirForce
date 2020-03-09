@@ -6,7 +6,7 @@ namespace AirForce
     {
         public Meteor(int positionX, int positionY)
         {
-            TypeOfObject = TypeOfObject.Meteor;
+            ObjectType = ObjectType.Meteor;
             PositionX = positionX;
             PositionY = positionY;
             Size = 160;

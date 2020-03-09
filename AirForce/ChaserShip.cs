@@ -4,7 +4,7 @@
     {
         public ChaserShip(int positionX, int positionY)
         {
-            TypeOfObject = TypeOfObject.ChaserShip;
+            ObjectType = ObjectType.ChaserShip;
             PositionX = positionX;
             PositionY = positionY;
             Health = 1;

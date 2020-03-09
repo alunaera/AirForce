@@ -8,7 +8,7 @@ namespace AirForce
 
         public PlayerShip()
         {
-            TypeOfObject = TypeOfObject.PlayerShip;
+            ObjectType = ObjectType.PlayerShip;
             SetDefaultValue();
         }
 

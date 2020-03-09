@@ -11,7 +11,7 @@ namespace AirForce
     {
         public Ground()
         {
-            TypeOfObject = TypeOfObject.Ground;
+            ObjectType = ObjectType.Ground;
             PositionX = 0;
             PositionY = 750;
         }

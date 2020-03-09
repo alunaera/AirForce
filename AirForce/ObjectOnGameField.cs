@@ -1,11 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 
 
 namespace AirForce
 {
     internal abstract class ObjectOnGameField
     {
-        public TypeOfObject TypeOfObject { get; protected set; }
+        public ObjectType ObjectType { get; protected set; }
         public int PositionX { get; protected set; }
         public int PositionY { get; protected set; }
         public int Health { get; protected set; }
@@ -21,7 +22,7 @@ namespace AirForce
             double componentX = Math.Pow(PositionX - objectX, 2);
             double componentY = Math.Pow(PositionY - objectY, 2);
 
-            return (int)Math.Sqrt(componentX + componentY);
+            return (int) Math.Sqrt(componentX + componentY);
         }
     }
 }
