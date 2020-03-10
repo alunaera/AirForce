@@ -64,7 +64,7 @@
     <Compile Include="ObjectsOnGameField\Ship.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ObjectsOnGameField\ObjectType.cs" />
+    <Compile Include="ObjectType.cs" />
     <EmbeddedResource Include="MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
     </EmbeddedResource>

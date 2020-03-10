@@ -9,10 +9,11 @@ namespace AirForce
     internal class Game
     {
         private static readonly Random Random = new Random();
+        private readonly Font font = new Font("Arial", 10);
 
         private int gameFieldWidth;
         private int gameFieldHeight;
-        private PlayerShip playerShip;
+        private PlayerShip PlayerShip => (PlayerShip)objectsOnGameFieldList[0];
         private Ground ground;
         private List<ObjectOnGameField> objectsOnGameFieldList;
 
@@ -23,29 +24,19 @@ namespace AirForce
             this.gameFieldWidth = gameFieldWidth;
             this.gameFieldHeight = gameFieldHeight;
 
-            playerShip = new PlayerShip();
             ground = new Ground();
-            objectsOnGameFieldList = new List<ObjectOnGameField>();
+            objectsOnGameFieldList = new List<ObjectOnGameField> {new PlayerShip()};
         }
 
         public void Update()
         {
-            MovePlayerShip();
             MoveObjectsOnGameField();
 
             if (IsDefeat())
                 Defeat();
 
-            if (objectsOnGameFieldList.Count == 0)
+            if (objectsOnGameFieldList.Count < 2)
                 GenerateEnemies();
-        }
-
-        private void MovePlayerShip()
-        {
-            playerShip.Move();
-
-            if (playerShip.PositionY + playerShip.Size / 2 >= ground.PositionY + 5)
-                playerShip.TakeDamage(ground);
         }
 
         private void MoveObjectsOnGameField()
@@ -54,28 +45,30 @@ namespace AirForce
             {
                 ObjectOnGameField objectOnGameField = objectsOnGameFieldList[i];
 
+                objectOnGameField.Move();
+
+                if (objectOnGameField.PositionX + objectOnGameField.Size < 0)
+                    objectOnGameField.Destroy();
+
+                if (objectOnGameField.PositionY + objectOnGameField.Size / 2 >= ground.PositionY + 5)
+                    objectOnGameField.TakeDamage(ground);
+
                 if (objectOnGameField.Health > 0)
                 {
-                    objectOnGameField.Move();
+                    var damageableObjectsList =
+                        objectsOnGameFieldList.Where(nextObjectOnGameField => IsDamaged(objectOnGameField, nextObjectOnGameField));
 
-                    if (objectOnGameField.PositionX + objectOnGameField.Size < 0)
-                        objectOnGameField.Destroy();
-
-                    if (objectOnGameField.IsIntersection(playerShip))
+                    foreach (var nextObjectOnGameField in damageableObjectsList)
                     {
-                        playerShip.TakeDamage(objectOnGameField);
-                        objectOnGameField.TakeDamage(playerShip);
-                    }
-
-                    var damageableObjectList = objectsOnGameFieldList.Where(nextObjectOnGameField =>
-                        objectOnGameField.IsIntersection(nextObjectOnGameField) &&
-                        IsDamaged(objectOnGameField, nextObjectOnGameField));
-
-                    foreach (ObjectOnGameField nextObjectOnGameField in damageableObjectList)
                         objectOnGameField.TakeDamage(nextObjectOnGameField);
+                        nextObjectOnGameField.TakeDamage(objectOnGameField);
+                    }
                 }
                 else
                 {
+                    if (i == 0) 
+                        continue;
+
                     objectsOnGameFieldList.RemoveAt(i);
                     i--;
                 }
@@ -84,42 +77,47 @@ namespace AirForce
 
         public void ChangePlayerShipMoveMode(Keys keyCode)
         {
-            playerShip.ChangeMoveMode(keyCode);
+            PlayerShip.ChangeMoveMode(keyCode);
         }
 
         public void SetPlayerShipMoveModeDefaultValue()
         {
-            playerShip.SetMoveModeDefaultValue();
+            PlayerShip.SetMoveModeDefaultValue();
         }
 
         private void GenerateEnemies()
         {
-            switch (Random.Next(1, 5))
-            {
-                case 1:
-                    objectsOnGameFieldList.Add(new ChaserShip(1500, Random.Next(100, 500)));
-                    break;
-                case 2:
-                    objectsOnGameFieldList.Add(new BomberShip(1500, Random.Next(100, 500)));
-                    break;
-                case 3:
-                    objectsOnGameFieldList.Add(new Meteor(Random.Next(1400, 1500), 0));
-                    break;
-                case 4:
-                    objectsOnGameFieldList.Add(new Bird(1500, Random.Next(100, 500)));
-                    break;
-            }
+            int generatedObjectsCount = Random.Next(1, 3);
+
+            for (int i = 0; i < generatedObjectsCount; i++)
+                switch (Random.Next(1, 5))
+                {
+                    case 1:
+                        objectsOnGameFieldList.Add(new ChaserShip(1500, Random.Next(100, 500)));
+                        break;
+                    case 2:
+                        objectsOnGameFieldList.Add(new BomberShip(1500, Random.Next(100, 500)));
+                        break;
+                    case 3:
+                        objectsOnGameFieldList.Add(new Meteor(Random.Next(1400, 1500), 0));
+                        break;
+                    case 4:
+                        objectsOnGameFieldList.Add(new Bird(1500, Random.Next(100, 500)));
+                        break;
+                }
         }
 
         private bool IsDefeat()
         {
-            return playerShip.Health < 1;
+            return PlayerShip.Health < 1;
         }
 
         public void Draw(Graphics graphics)
         {
             DrawBackground(graphics);
             DrawObjectsOnGameField(graphics);
+
+            graphics.DrawString(PlayerShip.Health.ToString(), font,Brushes.Black, 1400, 10);
         }
 
         private void DrawBackground(Graphics graphics)
@@ -132,9 +130,9 @@ namespace AirForce
 
         private void DrawObjectsOnGameField(Graphics graphics)
         {
-            graphics.DrawImage(playerShip.Bitmap,
-                playerShip.PositionX - playerShip.Size / 2, playerShip.PositionY - playerShip.Size / 2,
-                playerShip.Size, playerShip.Size);
+            graphics.DrawImage(PlayerShip.Bitmap,
+                PlayerShip.PositionX - PlayerShip.Size / 2, PlayerShip.PositionY - PlayerShip.Size / 2,
+                PlayerShip.Size, PlayerShip.Size);
 
             foreach (ObjectOnGameField objectOnGameField in objectsOnGameFieldList)
                 graphics.DrawImage(objectOnGameField.Bitmap,
@@ -209,7 +207,9 @@ namespace AirForce
 
         private bool IsDamaged(ObjectOnGameField firstObjectOnGame, ObjectOnGameField secondObjectOnGameField)
         {
-            return intersectTable[firstObjectOnGame.ObjectType][secondObjectOnGameField.ObjectType];
+            return intersectTable[firstObjectOnGame.ObjectType][secondObjectOnGameField.ObjectType] &&
+                   firstObjectOnGame.IsIntersection(secondObjectOnGameField) &&
+                   secondObjectOnGameField.Health > 0;
         }
     }
 }

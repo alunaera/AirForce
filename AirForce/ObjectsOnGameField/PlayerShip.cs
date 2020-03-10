@@ -2,9 +2,11 @@
 
 namespace AirForce
 {
-    class PlayerShip : Ship
+    internal class PlayerShip : Ship
     {
-        private MoveMode MoveMode;
+        private const int MaxPositionX = 1535;
+
+        private MoveMode moveMode;
 
         public PlayerShip()
         {
@@ -25,7 +27,7 @@ namespace AirForce
 
         public override void Move()
         {
-            switch (MoveMode)
+            switch (moveMode)
             {
                 case MoveMode.Up:
                     PositionY -= 8;
@@ -59,23 +61,23 @@ namespace AirForce
             switch (keyCode)
             {
                 case Keys.W:
-                    MoveMode = MoveMode.Up;
+                    moveMode = MoveMode.Up;
                     break;
                 case Keys.D:
-                    MoveMode = MoveMode.Right;
+                    moveMode = MoveMode.Right;
                     break;
                 case Keys.S:
-                    MoveMode = MoveMode.Down;
+                    moveMode = MoveMode.Down;
                     break;
                 case Keys.A:
-                    MoveMode = MoveMode.Left;
+                    moveMode = MoveMode.Left;
                     break;
             }
         }
 
         public void SetMoveModeDefaultValue()
         {
-            MoveMode = MoveMode.NoMove;
+            moveMode = MoveMode.NoMove;
         }
 
         public override void TakeDamage(ObjectOnGameField objectOnGameField)
