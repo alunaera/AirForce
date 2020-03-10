@@ -27,7 +27,7 @@ namespace AirForce
         {
             switch (MoveMode)
             {
-                case MoveMode.Top:
+                case MoveMode.Up:
                     PositionY -= 8;
                     break;
                 case MoveMode.Right:
@@ -59,7 +59,7 @@ namespace AirForce
             switch (keyCode)
             {
                 case Keys.W:
-                    MoveMode = MoveMode.Top;
+                    MoveMode = MoveMode.Up;
                     break;
                 case Keys.D:
                     MoveMode = MoveMode.Right;

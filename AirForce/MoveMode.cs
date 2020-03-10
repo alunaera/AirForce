@@ -3,7 +3,7 @@
    internal enum MoveMode
     {
         NoMove,
-        Top,
+        Up,
         Right,
         Down,
         Left

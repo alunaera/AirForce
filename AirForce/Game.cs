@@ -125,7 +125,9 @@ namespace AirForce
         private void DrawBackground(Graphics graphics)
         {
             graphics.FillRectangle(Brushes.LightBlue, 0, 0, gameFieldWidth, gameFieldHeight);
-            graphics.FillRectangle(Brushes.DarkGreen, ground.PositionX, ground.PositionY, gameFieldWidth, 100);
+            graphics.DrawImage(ground.Bitmap,
+                ground.PositionX, ground.PositionY,
+                ground.Width, ground.Height);
         }
 
         private void DrawObjectsOnGameField(Graphics graphics)
