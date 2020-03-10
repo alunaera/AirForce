@@ -1,20 +1,28 @@
 ﻿using System;
-using System.Collections.Generic;
-
+using System.Drawing;
 
 namespace AirForce
 {
     internal abstract class ObjectOnGameField
     {
         public ObjectType ObjectType { get; protected set; }
+        public Bitmap Bitmap { get; protected set; }
         public int PositionX { get; protected set; }
         public int PositionY { get; protected set; }
         public int Health { get; protected set; }
         public int Size { get; protected set; }
 
-        public bool IsIntersection(int positionX, int positionY, int size)
+        public abstract void Move();
+        public abstract void TakeDamage(ObjectOnGameField objectOnGameField);
+
+        public void Destroy()
         {
-            return GetDistanceToObject(positionX, positionY) <= (Size + size) / 2;
+            Health = 0;
+        }
+
+        public bool IsIntersection(ObjectOnGameField objectOnGameField)
+        {
+            return GetDistanceToObject(objectOnGameField.PositionX, objectOnGameField.PositionY) <= (Size + objectOnGameField.Size) / 2;
         }
 
         private int GetDistanceToObject(int objectX, int objectY)

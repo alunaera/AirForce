@@ -9,6 +9,7 @@ namespace AirForce
         public PlayerShip()
         {
             ObjectType = ObjectType.PlayerShip;
+            Bitmap = Properties.Resources.PlayerShip;
             SetDefaultValue();
         }
 
@@ -22,7 +23,7 @@ namespace AirForce
             SetMoveModeDefaultValue();
         }
 
-        public new void Move()
+        public override void Move()
         {
             switch (MoveMode)
             {
@@ -77,20 +78,21 @@ namespace AirForce
             MoveMode = MoveMode.NoMove;
         }
 
-        public void TakeDamage<T>()
+        public override void TakeDamage(ObjectOnGameField objectOnGameField)
         {
-            switch (typeof(T).ToString())
+            switch (objectOnGameField.ObjectType)
             {
-                case "AirForce.ChaserShip":
-                case "AirForce.BigShip":
-                case "AirForce.Bird":
+                case ObjectType.ChaserShip:
+                case ObjectType.BomberShip:
+                case ObjectType.Bird:
                     Health--;
                     break;
-                case "AirForce.Ground":
-                case "AirForce.Meteor":
-                    DestroyShip();
+                case ObjectType.Ground:
+                case ObjectType.Meteor:
+                    Destroy();
                     break;
             }
-        } 
+        }
+
     }
 }
