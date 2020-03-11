@@ -11,16 +11,13 @@
             Bitmap = Properties.Resources.Ground;
             PositionX = 0;
             PositionY = 750;
+            Health = 1000;
             Size = 0;
             Width = 1550;
             Height = 100;
         }
 
         public override void Move()
-        {
-        }
-
-        public override void TakeDamage(ObjectOnGameField objectOnGameField)
         {
         }
     }

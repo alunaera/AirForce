@@ -16,16 +16,5 @@
         {
             PositionX -= 10;
         }
-
-        public override void TakeDamage(ObjectOnGameField objectOnGameField)
-        {
-            if (objectOnGameField.ObjectType == ObjectType.PlayerShip)
-                DestroyBird();
-        }
-
-        public void DestroyBird()
-        {
-            Health = 0;
-        }
     }
 }

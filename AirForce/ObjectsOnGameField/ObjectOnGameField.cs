@@ -13,11 +13,15 @@ namespace AirForce
         public int Size { get; protected set; }
 
         public abstract void Move();
-        public abstract void TakeDamage(ObjectOnGameField objectOnGameField);
 
         public void Destroy()
         {
             Health = 0;
+        }
+
+        public void TakeDamage(ObjectOnGameField objectOnGameField)
+        {
+            Health -= Math.Min(Health, objectOnGameField.Health);
         }
 
         public bool IsIntersection(ObjectOnGameField objectOnGameField)

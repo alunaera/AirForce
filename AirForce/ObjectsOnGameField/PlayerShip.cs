@@ -19,7 +19,7 @@ namespace AirForce
         {
             PositionX = 100;
             PositionY = 375;
-            Health = 3;
+            Health = 5;
             Size = 80;
 
             SetMoveModeDefaultValue();
@@ -79,22 +79,5 @@ namespace AirForce
         {
             moveMode = MoveMode.NoMove;
         }
-
-        public override void TakeDamage(ObjectOnGameField objectOnGameField)
-        {
-            switch (objectOnGameField.ObjectType)
-            {
-                case ObjectType.ChaserShip:
-                case ObjectType.BomberShip:
-                case ObjectType.Bird:
-                    Health--;
-                    break;
-                case ObjectType.Ground:
-                case ObjectType.Meteor:
-                    Destroy();
-                    break;
-            }
-        }
-
     }
 }

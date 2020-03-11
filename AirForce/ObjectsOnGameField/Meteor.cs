@@ -11,23 +11,13 @@ namespace AirForce
             PositionX = positionX;
             PositionY = positionY;
             Size = 160;
-            Health = 5;
+            Health = 10;
         }
 
         public override void Move()
         {
             PositionX -= 10;
             PositionY += 4;
-        }
-
-        public override void TakeDamage(ObjectOnGameField objectOnGameField)
-        {
-            
-        }
-
-        public void Destroy()
-        {
-            Health = 0;
         }
     }
 }

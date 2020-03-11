@@ -41,11 +41,12 @@ namespace AirForce
 
         private void MoveObjectsOnGameField()
         {
+            foreach (ObjectOnGameField objectOnGameField in objectsOnGameFieldList)
+                objectOnGameField.Move();
+
             for (int i = 0; i < objectsOnGameFieldList.Count; i++)
             {
                 ObjectOnGameField objectOnGameField = objectsOnGameFieldList[i];
-
-                objectOnGameField.Move();
 
                 if (objectOnGameField.PositionX + objectOnGameField.Size < 0)
                     objectOnGameField.Destroy();
@@ -55,10 +56,12 @@ namespace AirForce
 
                 if (objectOnGameField.Health > 0)
                 {
-                    var damageableObjectsList =
-                        objectsOnGameFieldList.Where(nextObjectOnGameField => IsDamaged(objectOnGameField, nextObjectOnGameField));
 
-                    foreach (var nextObjectOnGameField in damageableObjectsList)
+                    var damageableObjectsList =
+                        objectsOnGameFieldList.Where(nextObjectOnGameField =>
+                            IsDamaged(objectOnGameField, nextObjectOnGameField));
+
+                    foreach (ObjectOnGameField nextObjectOnGameField in damageableObjectsList)
                     {
                         objectOnGameField.TakeDamage(nextObjectOnGameField);
                         nextObjectOnGameField.TakeDamage(objectOnGameField);
@@ -66,7 +69,7 @@ namespace AirForce
                 }
                 else
                 {
-                    if (i == 0) 
+                    if (i == 0)
                         continue;
 
                     objectsOnGameFieldList.RemoveAt(i);
