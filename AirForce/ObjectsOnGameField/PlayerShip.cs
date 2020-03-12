@@ -24,7 +24,7 @@ namespace AirForce
 
             SetMoveModeDefaultValue();
         }
-
+        
         public override void Move()
         {
             switch (moveMode)

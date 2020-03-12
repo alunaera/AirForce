@@ -52,7 +52,7 @@ namespace AirForce
                     objectOnGameField.Destroy();
 
                 if (objectOnGameField.PositionY + objectOnGameField.Size / 2 >= ground.PositionY + 5)
-                    objectOnGameField.TakeDamage(ground);
+                    objectOnGameField.TakeDamage(ground.Health);
 
                 if (objectOnGameField.Health > 0)
                 {
@@ -63,15 +63,14 @@ namespace AirForce
 
                     foreach (ObjectOnGameField nextObjectOnGameField in damageableObjectsList)
                     {
-                        objectOnGameField.TakeDamage(nextObjectOnGameField);
-                        nextObjectOnGameField.TakeDamage(objectOnGameField);
+                        int objectOnGameFieldHealth = objectOnGameField.Health;
+
+                        objectOnGameField.TakeDamage(nextObjectOnGameField.Health);
+                        nextObjectOnGameField.TakeDamage(objectOnGameFieldHealth);
                     }
                 }
                 else
                 {
-                    if (i == 0)
-                        continue;
-
                     objectsOnGameFieldList.RemoveAt(i);
                     i--;
                 }
@@ -120,7 +119,7 @@ namespace AirForce
             DrawBackground(graphics);
             DrawObjectsOnGameField(graphics);
 
-            graphics.DrawString(PlayerShip.Health.ToString(), font,Brushes.Black, 1400, 10);
+            graphics.DrawString(PlayerShip.Health.ToString(), font, Brushes.Black, 1400, 10);
         }
 
         private void DrawBackground(Graphics graphics)
@@ -144,73 +143,59 @@ namespace AirForce
                     objectOnGameField.Size, objectOnGameField.Size);
         }
 
-        private readonly Dictionary<ObjectType, Dictionary<ObjectType, bool>> intersectTable =
-            new Dictionary<ObjectType, Dictionary<ObjectType, bool>>
+        private readonly Dictionary<ObjectType, HashSet<ObjectType>> intersectTable = new Dictionary<ObjectType, HashSet<ObjectType>>()
+
             {
                 {
-                    ObjectType.PlayerShip, new Dictionary<ObjectType, bool>
+                    ObjectType.PlayerShip, new HashSet<ObjectType>()
                     {
-                        [ObjectType.PlayerShip] = false,
-                        [ObjectType.ChaserShip] = true,
-                        [ObjectType.BomberShip] = true,
-                        [ObjectType.Meteor] = true,
-                        [ObjectType.Bird] = true,
-                        [ObjectType.Ground] = true
+                        ObjectType.ChaserShip,
+                        ObjectType.BomberShip,
+                        ObjectType.Meteor,
+                        ObjectType.Bird,
+                        ObjectType.Ground
                     }
                 },
 
                 {
-                    ObjectType.ChaserShip, new Dictionary<ObjectType, bool>
+                    ObjectType.ChaserShip, new HashSet<ObjectType>()
                     {
-                        [ObjectType.PlayerShip] = true,
-                        [ObjectType.ChaserShip] = false,
-                        [ObjectType.BomberShip] = false,
-                        [ObjectType.Meteor] = true,
-                        [ObjectType.Bird] = false,
-                        [ObjectType.Ground] = true
+                        ObjectType.PlayerShip,
+                        ObjectType.BomberShip,
+                        ObjectType.Meteor,
+                        ObjectType.Ground
                     }
                 },
 
                 {
-                    ObjectType.BomberShip, new Dictionary<ObjectType, bool>
+                    ObjectType.BomberShip, new HashSet<ObjectType>()
                     {
-                        [ObjectType.PlayerShip] = true,
-                        [ObjectType.ChaserShip] = false,
-                        [ObjectType.BomberShip] = false,
-                        [ObjectType.Meteor] = true,
-                        [ObjectType.Bird] = false,
-                        [ObjectType.Ground] = true
+                        ObjectType.PlayerShip,
+                        ObjectType.ChaserShip,
+                        ObjectType.Meteor,
+                        ObjectType.Ground
                     }
                 },
-
                 {
-                    ObjectType.Meteor, new Dictionary<ObjectType, bool>
+                    ObjectType.Meteor, new HashSet<ObjectType>()
                     {
-                        [ObjectType.PlayerShip] = true,
-                        [ObjectType.ChaserShip] = true,
-                        [ObjectType.BomberShip] = true,
-                        [ObjectType.Meteor] = false,
-                        [ObjectType.Bird] = false,
-                        [ObjectType.Ground] = true
+                        ObjectType.PlayerShip,
+                        ObjectType.ChaserShip,
+                        ObjectType.BomberShip,
+                        ObjectType.Ground
                     }
                 },
-
                 {
-                    ObjectType.Bird, new Dictionary<ObjectType, bool>
+                    ObjectType.Bird, new HashSet<ObjectType>()
                     {
-                        [ObjectType.PlayerShip] = true,
-                        [ObjectType.ChaserShip] = false,
-                        [ObjectType.BomberShip] = false,
-                        [ObjectType.Meteor] = false,
-                        [ObjectType.Bird] = false,
-                        [ObjectType.Ground] = false
+                        ObjectType.PlayerShip
                     }
                 }
             };
 
         private bool IsDamaged(ObjectOnGameField firstObjectOnGame, ObjectOnGameField secondObjectOnGameField)
         {
-            return intersectTable[firstObjectOnGame.ObjectType][secondObjectOnGameField.ObjectType] &&
+            return intersectTable[firstObjectOnGame.ObjectType].Contains(secondObjectOnGameField.ObjectType) &&
                    firstObjectOnGame.IsIntersection(secondObjectOnGameField) &&
                    secondObjectOnGameField.Health > 0;
         }

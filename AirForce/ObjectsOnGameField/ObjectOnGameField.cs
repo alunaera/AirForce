@@ -19,9 +19,9 @@ namespace AirForce
             Health = 0;
         }
 
-        public void TakeDamage(ObjectOnGameField objectOnGameField)
+        public void TakeDamage(int objectOnGameFieldHealth)
         {
-            Health -= Math.Min(Health, objectOnGameField.Health);
+            Health -= Math.Min(Health, objectOnGameFieldHealth);
         }
 
         public bool IsIntersection(ObjectOnGameField objectOnGameField)
