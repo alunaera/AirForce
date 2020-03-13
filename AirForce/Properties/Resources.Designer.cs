@@ -83,6 +83,16 @@ namespace AirForce.Properties {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap BomberShipBullet {
+            get {
+                object obj = ResourceManager.GetObject("BomberShipBullet", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap ChaserShip {
             get {
                 object obj = ResourceManager.GetObject("ChaserShip", resourceCulture);
@@ -106,6 +116,16 @@ namespace AirForce.Properties {
         internal static System.Drawing.Bitmap Meteor {
             get {
                 object obj = ResourceManager.GetObject("Meteor", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap PlayerBullet {
+            get {
+                object obj = ResourceManager.GetObject("PlayerBullet", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

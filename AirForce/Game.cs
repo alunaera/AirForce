@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace AirForce
@@ -35,7 +37,7 @@ namespace AirForce
             if (IsDefeat())
                 Defeat();
 
-            if (objectsOnGameFieldList.Count < 2)
+            if (objectsOnGameFieldList.Count(objectOnGameField => objectOnGameField.ObjectType != ObjectType.PlayerBullet) < 2)
                 GenerateEnemies();
         }
 
@@ -48,8 +50,16 @@ namespace AirForce
             {
                 ObjectOnGameField objectOnGameField = objectsOnGameFieldList[i];
 
-                if (objectOnGameField.PositionX + objectOnGameField.Size < 0)
-                    objectOnGameField.Destroy();
+                if (objectOnGameField.ObjectType != ObjectType.PlayerBullet)
+                {
+                    if (objectOnGameField.PositionX + objectOnGameField.Size < 0)
+                        objectOnGameField.Destroy();
+                }
+                else
+                {
+                    if(objectOnGameField.PositionX + objectOnGameField.Size > gameFieldWidth)
+                        objectOnGameField.Destroy();
+                }
 
                 if (objectOnGameField.PositionY + objectOnGameField.Size / 2 >= ground.PositionY + 5)
                     objectOnGameField.TakeDamage(ground.Health);
@@ -80,6 +90,11 @@ namespace AirForce
         public void ChangePlayerShipMoveMode(Keys keyCode)
         {
             PlayerShip.ChangeMoveMode(keyCode);
+        }
+
+        public void MakeShot()
+        {
+            objectsOnGameFieldList.Add(new PlayerBullet(PlayerShip.PositionX + PlayerShip.Size / 2, PlayerShip.PositionY));
         }
 
         public void SetPlayerShipMoveModeDefaultValue()
@@ -151,8 +166,19 @@ namespace AirForce
                     {
                         ObjectType.ChaserShip,
                         ObjectType.BomberShip,
+                        ObjectType.BomberShipBullet,
                         ObjectType.Meteor,
                         ObjectType.Bird,
+                        ObjectType.Ground
+                    }
+                },
+
+                {
+                    ObjectType.PlayerBullet, new HashSet<ObjectType>()
+                    {
+                        ObjectType.ChaserShip,
+                        ObjectType.BomberShip,
+                        ObjectType.Meteor,
                         ObjectType.Ground
                     }
                 },
@@ -161,6 +187,7 @@ namespace AirForce
                     ObjectType.ChaserShip, new HashSet<ObjectType>()
                     {
                         ObjectType.PlayerShip,
+                        ObjectType.PlayerBullet,
                         ObjectType.BomberShip,
                         ObjectType.Meteor,
                         ObjectType.Ground
@@ -171,17 +198,30 @@ namespace AirForce
                     ObjectType.BomberShip, new HashSet<ObjectType>()
                     {
                         ObjectType.PlayerShip,
+                        ObjectType.PlayerBullet,
                         ObjectType.ChaserShip,
                         ObjectType.Meteor,
                         ObjectType.Ground
                     }
                 },
+
+                {
+                    ObjectType.BomberShipBullet, new HashSet<ObjectType>()
+                    {
+                        ObjectType.PlayerShip,
+                        ObjectType.Meteor,
+                        ObjectType.Ground
+                    }
+                },
+
                 {
                     ObjectType.Meteor, new HashSet<ObjectType>()
                     {
                         ObjectType.PlayerShip,
+                        ObjectType.PlayerBullet,
                         ObjectType.ChaserShip,
                         ObjectType.BomberShip,
+                        ObjectType.BomberShipBullet,
                         ObjectType.Ground
                     }
                 },

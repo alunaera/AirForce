@@ -1,4 +1,6 @@
 ﻿using System.Drawing.Drawing2D;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace AirForce
@@ -45,7 +47,9 @@ namespace AirForce
                 case Keys.S:
                 case Keys.A:
                     game.ChangePlayerShipMoveMode(e.KeyCode);
-                 //  gameField.Refresh();
+                    break;
+                case Keys.Space:
+                   // game.MakeShot();
                     break;
             }
         }

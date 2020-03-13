@@ -48,6 +48,7 @@
   <ItemGroup>
     <Compile Include="ObjectsOnGameField\Bird.cs" />
     <Compile Include="ObjectsOnGameField\BomberShip.cs" />
+    <Compile Include="ObjectsOnGameField\BomberShipBullet.cs" />
     <Compile Include="ObjectsOnGameField\ChaserShip.cs" />
     <Compile Include="ObjectsOnGameField\Ground.cs" />
     <Compile Include="ObjectsOnGameField\Meteor.cs" />
@@ -60,6 +61,7 @@
     <Compile Include="MainForm.Designer.cs">
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="ObjectsOnGameField\PlayerBullet.cs" />
     <Compile Include="ObjectsOnGameField\PlayerShip.cs" />
     <Compile Include="ObjectsOnGameField\Ship.cs" />
     <Compile Include="Program.cs" />
@@ -108,6 +110,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Ground.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\PlayerBullet.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\BomberShipBullet.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
