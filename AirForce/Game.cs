@@ -50,6 +50,9 @@ namespace AirForce
             {
                 ObjectOnGameField objectOnGameField = objectsOnGameFieldList[i];
 
+                if(objectOnGameField.ObjectType == ObjectType.PlayerShip)
+                    PlayerShip.IncreaseDelayOfShot(15);
+
                 if (objectOnGameField.ObjectType != ObjectType.PlayerBullet)
                 {
                     if (objectOnGameField.PositionX + objectOnGameField.Size < 0)
@@ -94,7 +97,12 @@ namespace AirForce
 
         public void MakeShot()
         {
-            objectsOnGameFieldList.Add(new PlayerBullet(PlayerShip.PositionX + PlayerShip.Size / 2, PlayerShip.PositionY));
+            if (PlayerShip.DelayOfShot > 0) 
+                return;
+
+            objectsOnGameFieldList.Add(new PlayerBullet(PlayerShip.PositionX + PlayerShip.Size / 2,
+                PlayerShip.PositionY));
+            PlayerShip.SetDelayOfShotDefaultValue();
         }
 
         public void SetPlayerShipMoveModeDefaultValue()
@@ -139,7 +147,7 @@ namespace AirForce
 
         private void DrawBackground(Graphics graphics)
         {
-            graphics.FillRectangle(Brushes.LightBlue, 0, 0, gameFieldWidth, gameFieldHeight);
+            graphics.FillRectangle(Brushes.LightCyan, 0, 0, gameFieldWidth, gameFieldHeight);
             graphics.DrawImage(ground.Bitmap,
                 ground.PositionX, ground.PositionY,
                 ground.Width, ground.Height);

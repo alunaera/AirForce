@@ -49,7 +49,7 @@ namespace AirForce
                     game.ChangePlayerShipMoveMode(e.KeyCode);
                     break;
                 case Keys.Space:
-                   // game.MakeShot();
+                    game.MakeShot();
                     break;
             }
         }

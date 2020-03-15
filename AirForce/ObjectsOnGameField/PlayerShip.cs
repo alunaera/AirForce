@@ -12,6 +12,7 @@ namespace AirForce
         {
             ObjectType = ObjectType.PlayerShip;
             Bitmap = Properties.Resources.PlayerShip;
+            DelayOfShot = 0;
             SetDefaultValue();
         }
 
