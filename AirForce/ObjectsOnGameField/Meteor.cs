@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace AirForce
 {
@@ -14,7 +15,7 @@ namespace AirForce
             Health = 10;
         }
 
-        public override void Move()
+        public override void Move(List<ObjectOnGameField> objectOnGameFieldsList)
         {
             PositionX -= 10;
             PositionY += 4;

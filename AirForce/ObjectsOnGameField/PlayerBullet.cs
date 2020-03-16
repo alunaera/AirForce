@@ -1,4 +1,6 @@
-﻿namespace AirForce
+﻿using System.Collections.Generic;
+
+namespace AirForce
 {
     class PlayerBullet : ObjectOnGameField
     {
@@ -12,7 +14,7 @@
             Size = 14;
         }
 
-        public override void Move()
+        public override void Move(List<ObjectOnGameField> objectOnGameFieldsList)
         {
             PositionX += 8;
         }

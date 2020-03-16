@@ -1,4 +1,5 @@
-﻿using System.Windows.Forms;
+﻿using System.Collections.Generic;
+using System.Windows.Forms;
 
 namespace AirForce
 {
@@ -26,7 +27,7 @@ namespace AirForce
             SetMoveModeDefaultValue();
         }
         
-        public override void Move()
+        public override void Move(List<ObjectOnGameField> objectOnGameFieldsList)
         {
             switch (moveMode)
             {

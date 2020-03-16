@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace AirForce
@@ -11,10 +9,11 @@ namespace AirForce
     internal class Game
     {
         private static readonly Random Random = new Random();
-        private readonly Font font = new Font("Arial", 10);
+        private readonly Font font = new Font("Arial", 15);
 
         private int gameFieldWidth;
         private int gameFieldHeight;
+        private int score;
         private PlayerShip PlayerShip => (PlayerShip)objectsOnGameFieldList[0];
         private Ground ground;
         private List<ObjectOnGameField> objectsOnGameFieldList;
@@ -25,6 +24,7 @@ namespace AirForce
         {
             this.gameFieldWidth = gameFieldWidth;
             this.gameFieldHeight = gameFieldHeight;
+            score = 0;
 
             ground = new Ground();
             objectsOnGameFieldList = new List<ObjectOnGameField> {new PlayerShip()};
@@ -44,7 +44,7 @@ namespace AirForce
         private void MoveObjectsOnGameField()
         {
             foreach (ObjectOnGameField objectOnGameField in objectsOnGameFieldList)
-                objectOnGameField.Move();
+                objectOnGameField.Move(objectsOnGameFieldList);
 
             for (int i = 0; i < objectsOnGameFieldList.Count; i++)
             {
@@ -80,6 +80,15 @@ namespace AirForce
 
                         objectOnGameField.TakeDamage(nextObjectOnGameField.Health);
                         nextObjectOnGameField.TakeDamage(objectOnGameFieldHealth);
+
+                        if (objectOnGameField.ObjectType != ObjectType.PlayerBullet &&
+                            objectOnGameField.ObjectType != ObjectType.PlayerShip ||
+                            nextObjectOnGameField.ObjectType != ObjectType.BomberShip &&
+                            nextObjectOnGameField.ObjectType != ObjectType.ChaserShip ||
+                            nextObjectOnGameField.Health >= 1)
+                            continue;
+
+                        score++;
                     }
                 }
                 else
@@ -100,7 +109,7 @@ namespace AirForce
             if (PlayerShip.DelayOfShot > 0) 
                 return;
 
-            objectsOnGameFieldList.Add(new PlayerBullet(PlayerShip.PositionX + PlayerShip.Size / 2,
+            objectsOnGameFieldList.Insert(1, new PlayerBullet(PlayerShip.PositionX + PlayerShip.Size / 2,
                 PlayerShip.PositionY));
             PlayerShip.SetDelayOfShotDefaultValue();
         }
@@ -127,7 +136,7 @@ namespace AirForce
                         objectsOnGameFieldList.Add(new Meteor(Random.Next(1400, 1500), 0));
                         break;
                     case 4:
-                        objectsOnGameFieldList.Add(new Bird(1500, Random.Next(100, 500)));
+                        objectsOnGameFieldList.Add(new Bird(1500, Random.Next(500, 700)));
                         break;
                 }
         }
@@ -140,17 +149,20 @@ namespace AirForce
         public void Draw(Graphics graphics)
         {
             DrawBackground(graphics);
+            DrawInterface(graphics);
             DrawObjectsOnGameField(graphics);
-
-            graphics.DrawString(PlayerShip.Health.ToString(), font, Brushes.Black, 1400, 10);
         }
 
         private void DrawBackground(Graphics graphics)
         {
             graphics.FillRectangle(Brushes.LightCyan, 0, 0, gameFieldWidth, gameFieldHeight);
-            graphics.DrawImage(ground.Bitmap,
-                ground.PositionX, ground.PositionY,
-                ground.Width, ground.Height);
+            graphics.DrawImage(ground.Bitmap, ground.PositionX, ground.PositionY, ground.Width, ground.Height);
+        }
+
+        private void DrawInterface(Graphics graphics)
+        {
+            graphics.DrawString("Score: " + score, font, Brushes.Black, 1370, 10);
+            graphics.DrawString("Player's health: " + PlayerShip.Health, font, Brushes.Black, 1370, 30);
         }
 
         private void DrawObjectsOnGameField(Graphics graphics)
@@ -196,7 +208,6 @@ namespace AirForce
                     {
                         ObjectType.PlayerShip,
                         ObjectType.PlayerBullet,
-                        ObjectType.BomberShip,
                         ObjectType.Meteor,
                         ObjectType.Ground
                     }
@@ -207,7 +218,6 @@ namespace AirForce
                     {
                         ObjectType.PlayerShip,
                         ObjectType.PlayerBullet,
-                        ObjectType.ChaserShip,
                         ObjectType.Meteor,
                         ObjectType.Ground
                     }

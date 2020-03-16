@@ -1,4 +1,6 @@
-﻿namespace AirForce
+﻿using System.Collections.Generic;
+
+namespace AirForce
 {
     internal class Bird : ObjectOnGameField
     {
@@ -12,7 +14,7 @@
             Size = 30;
         }
 
-        public override void Move()
+        public override void Move(List<ObjectOnGameField> objectOnGameFieldsList)
         {
             PositionX -= 10;
         }

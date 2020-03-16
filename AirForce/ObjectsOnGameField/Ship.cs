@@ -1,10 +1,14 @@
-﻿namespace AirForce
+﻿using System.Collections.Generic;
+
+namespace AirForce
 {
     internal class Ship : ObjectOnGameField
     {
+        protected const int GroundLevel = 10;
+
         public int DelayOfShot { get; protected set; }
 
-        public override void Move()
+        public override void Move(List<ObjectOnGameField> objectOnGameFieldsList)
         {
             PositionX -= 6;
         }
