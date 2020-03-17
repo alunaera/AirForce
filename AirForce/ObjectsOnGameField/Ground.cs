@@ -19,8 +19,9 @@ namespace AirForce
             Height = 100;
         }
 
-        public override void Move(List<ObjectOnGameField> objectOnGameFieldsList)
+        public override void Move(List<ObjectOnGameField> objectOnGameFieldsList, out List<ObjectOnGameField> createdObjectsList)
         {
+            createdObjectsList = new List<ObjectOnGameField>();
         }
     }
 }

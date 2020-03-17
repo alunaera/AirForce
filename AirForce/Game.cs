@@ -17,6 +17,8 @@ namespace AirForce
         private PlayerShip PlayerShip => (PlayerShip)objectsOnGameFieldList[0];
         private Ground ground;
         private List<ObjectOnGameField> objectsOnGameFieldList;
+        private List<ObjectOnGameField> createdObjectsList;
+        private List<Point> blastList;
 
         public event Action Defeat = delegate { };
 
@@ -28,30 +30,32 @@ namespace AirForce
 
             ground = new Ground();
             objectsOnGameFieldList = new List<ObjectOnGameField> {new PlayerShip()};
+            blastList = new List<Point>();
         }
 
         public void Update()
         {
-            MoveObjectsOnGameField();
-
             if (IsDefeat())
                 Defeat();
 
+            blastList.Clear();
+
+            MoveObjectsOnGameField();
+
             if (objectsOnGameFieldList.Count(objectOnGameField => objectOnGameField.ObjectType != ObjectType.PlayerBullet) < 2)
                 GenerateEnemies();
+
+            AddCreatedObjects();
         }
 
         private void MoveObjectsOnGameField()
         {
             foreach (ObjectOnGameField objectOnGameField in objectsOnGameFieldList)
-                objectOnGameField.Move(objectsOnGameFieldList);
+                objectOnGameField.Move(objectsOnGameFieldList, out createdObjectsList);
 
             for (int i = 0; i < objectsOnGameFieldList.Count; i++)
             {
                 ObjectOnGameField objectOnGameField = objectsOnGameFieldList[i];
-
-                if(objectOnGameField.ObjectType == ObjectType.PlayerShip)
-                    PlayerShip.IncreaseDelayOfShot(15);
 
                 if (objectOnGameField.ObjectType != ObjectType.PlayerBullet)
                 {
@@ -60,7 +64,7 @@ namespace AirForce
                 }
                 else
                 {
-                    if(objectOnGameField.PositionX + objectOnGameField.Size > gameFieldWidth)
+                    if (objectOnGameField.PositionX + objectOnGameField.Size > gameFieldWidth)
                         objectOnGameField.Destroy();
                 }
 
@@ -93,10 +97,24 @@ namespace AirForce
                 }
                 else
                 {
+                    blastList.Add(new Point(objectOnGameField.PositionX, objectOnGameField.PositionY));
+
+                    if (i == 0)
+                        continue;
+
                     objectsOnGameFieldList.RemoveAt(i);
                     i--;
                 }
             }
+        }
+
+        private void AddCreatedObjects()
+        {
+            foreach (ObjectOnGameField createdObject in createdObjectsList)
+            {
+                objectsOnGameFieldList.Add(createdObject);
+            }
+            createdObjectsList.Clear();
         }
 
         public void ChangePlayerShipMoveMode(Keys keyCode)
@@ -151,6 +169,7 @@ namespace AirForce
             DrawBackground(graphics);
             DrawInterface(graphics);
             DrawObjectsOnGameField(graphics);
+            DrawBlast(graphics);
         }
 
         private void DrawBackground(Graphics graphics)
@@ -163,6 +182,16 @@ namespace AirForce
         {
             graphics.DrawString("Score: " + score, font, Brushes.Black, 1370, 10);
             graphics.DrawString("Player's health: " + PlayerShip.Health, font, Brushes.Black, 1370, 30);
+        }
+
+        private void DrawBlast(Graphics graphics)
+        {
+            if(blastList.Count > 0)
+                foreach (var blast in blastList)
+                {
+                    graphics.DrawImage(Properties.Resources.Blast, blast.X - 5, blast.Y - 5, 10, 10);
+                }
+
         }
 
         private void DrawObjectsOnGameField(Graphics graphics)

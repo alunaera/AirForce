@@ -14,8 +14,9 @@ namespace AirForce
             Size = 30;
         }
 
-        public override void Move(List<ObjectOnGameField> objectOnGameFieldsList)
+        public override void Move(List<ObjectOnGameField> objectOnGameFieldsList, out List<ObjectOnGameField> createdObjectsList)
         {
+            createdObjectsList = new List<ObjectOnGameField>();
             PositionX -= 10;
         }
     }

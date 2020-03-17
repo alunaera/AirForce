@@ -27,8 +27,12 @@ namespace AirForce
             SetMoveModeDefaultValue();
         }
         
-        public override void Move(List<ObjectOnGameField> objectOnGameFieldsList)
+        public override void Move(List<ObjectOnGameField> objectOnGameFieldsList, out List<ObjectOnGameField> createdObjectsList)
         {
+            IncreaseDelayOfShot(15);
+
+            createdObjectsList = new List<ObjectOnGameField>();
+
             switch (moveMode)
             {
                 case MoveMode.Up:

@@ -15,8 +15,9 @@ namespace AirForce
             Health = 10;
         }
 
-        public override void Move(List<ObjectOnGameField> objectOnGameFieldsList)
+        public override void Move(List<ObjectOnGameField> objectOnGameFieldsList, out List<ObjectOnGameField> createdObjectsList)
         {
+            createdObjectsList = new List<ObjectOnGameField>();
             PositionX -= 10;
             PositionY += 4;
         }

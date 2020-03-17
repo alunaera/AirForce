@@ -13,7 +13,7 @@ namespace AirForce
         public int Health { get; protected set; }
         public int Size { get; protected set; }
 
-        public abstract void Move(List<ObjectOnGameField> objectOnGameFieldsList);
+        public abstract void Move(List<ObjectOnGameField> objectOnGameFieldsList, out List<ObjectOnGameField> createdObjectsList);
 
         public void Destroy()
         {
