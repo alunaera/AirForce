@@ -8,7 +8,7 @@ namespace AirForce
 {
     internal class Game
     {
-        private static readonly Random Random = new Random();
+        public static readonly Random Random = new Random();
         private readonly Font font = new Font("Arial", 15);
 
         private int gameFieldWidth;

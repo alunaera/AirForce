@@ -17,7 +17,9 @@ namespace AirForce
         public override void Move(List<ObjectOnGameField> objectOnGameFieldsList, out List<ObjectOnGameField> createdObjectsList)
         {
             createdObjectsList = new List<ObjectOnGameField>();
+
             PositionX -= 10;
+            PositionY += Game.Random.Next(-8, 8);
         }
     }
 }
