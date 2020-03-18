@@ -52,10 +52,8 @@ namespace AirForce
             foreach (GameObject gameObject in gameObjects)
                 gameObject.Move(gameObjects, out createdObjects);
 
-            for (int i = 0; i < gameObjects.Count; i++)
+            foreach (GameObject gameObject in gameObjects)
             {
-                GameObject gameObject = gameObjects[i];
-
                 if (gameObject.ObjectType != ObjectType.PlayerBullet)
                 {
                     if (gameObject.PositionX + gameObject.Size < 0)
@@ -72,7 +70,6 @@ namespace AirForce
 
                 if (gameObject.Health > 0)
                 {
-
                     var damageableObjects =
                         gameObjects.Where(nextGameObject => IsDamaged(gameObject, nextGameObject));
 
@@ -96,15 +93,10 @@ namespace AirForce
                 else
                 {
                     blasts.Add(new Point(gameObject.PositionX, gameObject.PositionY));
-
-                    if (i == 0)
-                        continue;
-
-                    gameObjects.RemoveAt(i);
-                    i--;
                 }
             }
 
+            gameObjects.RemoveAll(gameObject => gameObject.Health <= 0 && gameObject.ObjectType != ObjectType.PlayerShip);
             gameObjects.AddRange(createdObjects);
         }
 
@@ -118,13 +110,13 @@ namespace AirForce
             if (PlayerShip.DelayOfShot > 0) 
                 return;
 
-            gameObjects.Insert(1, new PlayerBullet(PlayerShip.PositionX + PlayerShip.Size / 2,  PlayerShip.PositionY));
-            PlayerShip.SetDelayOfShotDefaultValue();
+            gameObjects.Add(new PlayerBullet(PlayerShip.PositionX + PlayerShip.Size / 2,  PlayerShip.PositionY));
+            PlayerShip.ReloadWeapon();
         }
 
-        public void SetPlayerShipMoveModeDefaultValue()
+        public void SetPlayerShipMoveModeDefaultValue(Keys keyCode)
         {
-            PlayerShip.SetMoveModeDefaultValue();
+            PlayerShip.SetMoveModeDefaultValue(keyCode);
         }
 
         private void GenerateEnemies()
@@ -194,84 +186,50 @@ namespace AirForce
                     objectOnGameField.Size, objectOnGameField.Size);
         }
 
-        private readonly Dictionary<ObjectType, HashSet<ObjectType>> intersectTable = new Dictionary<ObjectType, HashSet<ObjectType>>()
-
-            {
-                {
-                    ObjectType.PlayerShip, new HashSet<ObjectType>()
-                    {
-                        ObjectType.ChaserShip,
-                        ObjectType.BomberShip,
-                        ObjectType.BomberShipBullet,
-                        ObjectType.Meteor,
-                        ObjectType.Bird,
-                        ObjectType.Ground
-                    }
-                },
-
-                {
-                    ObjectType.PlayerBullet, new HashSet<ObjectType>()
-                    {
-                        ObjectType.ChaserShip,
-                        ObjectType.BomberShip,
-                        ObjectType.Meteor,
-                        ObjectType.Ground
-                    }
-                },
-
-                {
-                    ObjectType.ChaserShip, new HashSet<ObjectType>()
-                    {
-                        ObjectType.PlayerShip,
-                        ObjectType.PlayerBullet,
-                        ObjectType.Meteor,
-                        ObjectType.Ground
-                    }
-                },
-
-                {
-                    ObjectType.BomberShip, new HashSet<ObjectType>()
-                    {
-                        ObjectType.PlayerShip,
-                        ObjectType.PlayerBullet,
-                        ObjectType.Meteor,
-                        ObjectType.Ground
-                    }
-                },
-
-                {
-                    ObjectType.BomberShipBullet, new HashSet<ObjectType>()
-                    {
-                        ObjectType.PlayerShip,
-                        ObjectType.Meteor,
-                        ObjectType.Ground
-                    }
-                },
-
-                {
-                    ObjectType.Meteor, new HashSet<ObjectType>()
-                    {
-                        ObjectType.PlayerShip,
-                        ObjectType.PlayerBullet,
-                        ObjectType.ChaserShip,
-                        ObjectType.BomberShip,
-                        ObjectType.BomberShipBullet,
-                        ObjectType.Ground
-                    }
-                },
-                {
-                    ObjectType.Bird, new HashSet<ObjectType>()
-                    {
-                        ObjectType.PlayerShip
-                    }
-                }
-            };
-
-        private bool IsDamaged(GameObject firstGameObjectOnGame, GameObject secondGameObject)
+        private readonly Dictionary<ObjectType, ObjectType> intersectTable = new Dictionary<ObjectType, ObjectType>
         {
-            return intersectTable[firstGameObjectOnGame.ObjectType].Contains(secondGameObject.ObjectType) &&
-                   firstGameObjectOnGame.IsIntersection(secondGameObject) &&
-                   secondGameObject.Health > 0;
+            [ObjectType.PlayerShip] = ObjectType.ChaserShip |
+                                      ObjectType.BomberShip |
+                                      ObjectType.BomberShipBullet |
+                                      ObjectType.Meteor |
+                                      ObjectType.Bird |
+                                      ObjectType.Ground,
+
+            [ObjectType.PlayerBullet] = ObjectType.ChaserShip |
+                                        ObjectType.BomberShip |
+                                        ObjectType.Meteor |
+                                        ObjectType.Ground,
+
+            [ObjectType.ChaserShip] = ObjectType.PlayerShip |
+                                      ObjectType.PlayerBullet |
+                                      ObjectType.Meteor |
+                                      ObjectType.Ground,
+
+            [ObjectType.BomberShip] = ObjectType.PlayerShip |
+                                      ObjectType.PlayerBullet |
+                                      ObjectType.Meteor |
+                                      ObjectType.Ground,
+
+            [ObjectType.BomberShipBullet] = ObjectType.PlayerShip |
+                                            ObjectType.Meteor |
+                                            ObjectType.Ground,
+
+            [ObjectType.Meteor] = ObjectType.PlayerShip |
+                                  ObjectType.PlayerBullet |
+                                  ObjectType.ChaserShip |
+                                  ObjectType.BomberShip |
+                                  ObjectType.BomberShipBullet |
+                                  ObjectType.Ground,
+
+            [ObjectType.Bird] = ObjectType.PlayerShip
+
+        };
+
+        private bool IsDamaged(GameObject a, GameObject b)
+        {
+            return intersectTable[a.ObjectType].HasFlag(b.ObjectType) &&
+                   a.IsIntersection(b) &&
+                   b.Health > 0;
         }
     }
 }

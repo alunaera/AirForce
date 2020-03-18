@@ -18,7 +18,7 @@ namespace AirForce
                 DelayOfShot -= valueOfIncrease;
         }
 
-        public void SetDelayOfShotDefaultValue()
+        public void ReloadWeapon()
         {
             DelayOfShot = 150;
         }

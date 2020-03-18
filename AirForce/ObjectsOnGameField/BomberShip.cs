@@ -28,7 +28,7 @@ namespace AirForce
             if (Math.Abs(PositionY - playerShip.PositionY) <= playerShip.Size && DelayOfShot == 0)
             {
                 createdObjects.Add(new BomberShipBullet(PositionX - Size, PositionY));
-                SetDelayOfShotDefaultValue();
+                ReloadWeapon();
             }
 
             PositionX -= 6;

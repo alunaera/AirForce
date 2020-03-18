@@ -1,11 +1,13 @@
-﻿namespace AirForce
+﻿using System;
+
+namespace AirForce
 {
+   [Flags]
    internal enum MoveMode
     {
-        NoMove,
-        Up,
-        Right,
-        Down,
-        Left
+        Up = 1,
+        Right = 2,
+        Down = 4,
+        Left = 8
     }
 }

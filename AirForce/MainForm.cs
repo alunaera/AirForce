@@ -17,6 +17,7 @@ namespace AirForce
             game.Defeat += () =>
             {
                 Timer.Enabled = false;
+                isPressedSpace = false;
                 MessageBox.Show("Game over");
                 game.StartGame(1535, 900);
                 Timer.Enabled = true;
@@ -64,7 +65,7 @@ namespace AirForce
                 case Keys.D:
                 case Keys.S:
                 case Keys.A:
-                    game.SetPlayerShipMoveModeDefaultValue();
+                    game.SetPlayerShipMoveModeDefaultValue(e.KeyCode);
                     break;
                 case Keys.Space:
                     isPressedSpace = false;
