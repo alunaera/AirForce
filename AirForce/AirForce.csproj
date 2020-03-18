@@ -54,7 +54,7 @@
     <Compile Include="ObjectsOnGameField\Meteor.cs" />
     <Compile Include="MoveMode.cs" />
     <Compile Include="Game.cs" />
-    <Compile Include="ObjectsOnGameField\ObjectOnGameField.cs" />
+    <Compile Include="ObjectsOnGameField\GameObject.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>

@@ -4,7 +4,7 @@ using System.Drawing;
 
 namespace AirForce
 {
-    internal abstract class ObjectOnGameField
+    internal abstract class GameObject
     {
         public ObjectType ObjectType { get; protected set; }
         public Bitmap Bitmap { get; protected set; }
@@ -13,21 +13,21 @@ namespace AirForce
         public int Health { get; protected set; }
         public int Size { get; protected set; }
 
-        public abstract void Move(List<ObjectOnGameField> objectOnGameFieldsList, out List<ObjectOnGameField> createdObjectsList);
+        public abstract void Move(List<GameObject> gameObjects, out List<GameObject> createdObjects);
 
         public void Destroy()
         {
             Health = 0;
         }
 
-        public void TakeDamage(int objectOnGameFieldHealth)
+        public void TakeDamage(int gameObjectHealth)
         {
-            Health -= Math.Min(Health, objectOnGameFieldHealth);
+            Health -= Math.Min(Health, gameObjectHealth);
         }
 
-        public bool IsIntersection(ObjectOnGameField objectOnGameField)
+        public bool IsIntersection(GameObject gameObject)
         {
-            return GetDistanceToObject(objectOnGameField.PositionX, objectOnGameField.PositionY) <= (Size + objectOnGameField.Size) / 2;
+            return GetDistanceToObject(gameObject.PositionX, gameObject.PositionY) <= (Size + gameObject.Size) / 2;
         }
 
         protected int GetDistanceToObject(int objectX, int objectY)

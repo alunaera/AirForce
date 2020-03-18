@@ -13,26 +13,19 @@ namespace AirForce
         {
             ObjectType = ObjectType.PlayerShip;
             Bitmap = Properties.Resources.PlayerShip;
-            DelayOfShot = 0;
-            SetDefaultValue();
-        }
-
-        private void SetDefaultValue()
-        {
             PositionX = 100;
             PositionY = 375;
             Health = 5;
             Size = 80;
+            DelayOfShot = 0;
 
             SetMoveModeDefaultValue();
         }
-        
-        public override void Move(List<ObjectOnGameField> objectOnGameFieldsList, out List<ObjectOnGameField> createdObjectsList)
+
+        public override void Move(List<GameObject> gameObjects, out List<GameObject> createdObjects)
         {
-            IncreaseDelayOfShot(15);
-
-            createdObjectsList = new List<ObjectOnGameField>();
-
+            createdObjects = new List<GameObject>();
+            
             switch (moveMode)
             {
                 case MoveMode.Up:
@@ -60,6 +53,8 @@ namespace AirForce
             PositionY = PositionY - Size / 2 < 0 
                 ? Size / 2 
                 : PositionY;
+
+            IncreaseDelayOfShot(15);
         }
 
         public void ChangeMoveMode(Keys keyCode)

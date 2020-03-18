@@ -16,18 +16,18 @@ namespace AirForce
             Size = 80;
         }
 
-        public override void Move(List<ObjectOnGameField> objectOnGameFieldsList, out List<ObjectOnGameField> createdObjectsList)
+        public override void Move(List<GameObject> gameObjects, out List<GameObject> createdObjects)
         {
-            createdObjectsList = new List<ObjectOnGameField>();
+            createdObjects = new List<GameObject>();
 
-            var playerShipBulletList =
-                objectOnGameFieldsList.Where(objectOnField => objectOnField.ObjectType == ObjectType.PlayerBullet)
-                                      .OrderBy(objectOnField => GetDistanceToObject(objectOnField.PositionX, objectOnField.PositionY));
+            var playerShipBullets =
+                gameObjects.Where(gameObject => gameObject.ObjectType == ObjectType.PlayerBullet)
+                           .OrderBy(gameObject => GetDistanceToObject(gameObject.PositionX, gameObject.PositionY));
 
-            if (playerShipBulletList.Any() && Math.Abs(PositionY - playerShipBulletList.First().PositionY) <= Size)
-                PositionY += Math.Sign(PositionY - playerShipBulletList.First().PositionY) * 3;
+            if (playerShipBullets.Any() && Math.Abs(PositionY - playerShipBullets.First().PositionY) <= Size)
+                PositionY += Math.Sign(PositionY - playerShipBullets.First().PositionY) * 3;
 
-            PositionX -= 6;
+            PositionX -= 8;
         }
     }
 }

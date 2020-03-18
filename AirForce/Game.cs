@@ -14,11 +14,10 @@ namespace AirForce
         private int gameFieldWidth;
         private int gameFieldHeight;
         private int score;
-        private PlayerShip PlayerShip => (PlayerShip)objectsOnGameFieldList[0];
+        private PlayerShip PlayerShip => (PlayerShip)gameObjects[0];
         private Ground ground;
-        private List<ObjectOnGameField> objectsOnGameFieldList;
-        private List<ObjectOnGameField> createdObjectsList;
-        private List<Point> blastList;
+        private List<GameObject> gameObjects;
+        private List<Point> blasts;
 
         public event Action Defeat = delegate { };
 
@@ -29,8 +28,8 @@ namespace AirForce
             score = 0;
 
             ground = new Ground();
-            objectsOnGameFieldList = new List<ObjectOnGameField> {new PlayerShip()};
-            blastList = new List<Point>();
+            gameObjects = new List<GameObject> {new PlayerShip()};
+            blasts = new List<Point>();
         }
 
         public void Update()
@@ -38,58 +37,57 @@ namespace AirForce
             if (IsDefeat())
                 Defeat();
 
-            blastList.Clear();
+            blasts.Clear();
 
             MoveObjectsOnGameField();
 
-            if (objectsOnGameFieldList.Count(objectOnGameField => objectOnGameField.ObjectType != ObjectType.PlayerBullet) < 2)
+            if (gameObjects.Count(gameObject => gameObject.ObjectType != ObjectType.PlayerBullet) < 2)
                 GenerateEnemies();
-
-            AddCreatedObjects();
         }
 
         private void MoveObjectsOnGameField()
-        {
-            foreach (ObjectOnGameField objectOnGameField in objectsOnGameFieldList)
-                objectOnGameField.Move(objectsOnGameFieldList, out createdObjectsList);
+        { 
+            List<GameObject> createdObjects = new List<GameObject>();
 
-            for (int i = 0; i < objectsOnGameFieldList.Count; i++)
+            foreach (GameObject gameObject in gameObjects)
+                gameObject.Move(gameObjects, out createdObjects);
+
+            for (int i = 0; i < gameObjects.Count; i++)
             {
-                ObjectOnGameField objectOnGameField = objectsOnGameFieldList[i];
+                GameObject gameObject = gameObjects[i];
 
-                if (objectOnGameField.ObjectType != ObjectType.PlayerBullet)
+                if (gameObject.ObjectType != ObjectType.PlayerBullet)
                 {
-                    if (objectOnGameField.PositionX + objectOnGameField.Size < 0)
-                        objectOnGameField.Destroy();
+                    if (gameObject.PositionX + gameObject.Size < 0)
+                        gameObject.Destroy();
                 }
                 else
                 {
-                    if (objectOnGameField.PositionX + objectOnGameField.Size > gameFieldWidth)
-                        objectOnGameField.Destroy();
+                    if (gameObject.PositionX + gameObject.Size > gameFieldWidth)
+                        gameObject.Destroy();
                 }
 
-                if (objectOnGameField.PositionY + objectOnGameField.Size / 2 >= ground.PositionY + 5)
-                    objectOnGameField.TakeDamage(ground.Health);
+                if (gameObject.PositionY + gameObject.Size / 2 >= ground.PositionY + 5)
+                    gameObject.TakeDamage(ground.Health);
 
-                if (objectOnGameField.Health > 0)
+                if (gameObject.Health > 0)
                 {
 
-                    var damageableObjectsList =
-                        objectsOnGameFieldList.Where(nextObjectOnGameField =>
-                            IsDamaged(objectOnGameField, nextObjectOnGameField));
+                    var damageableObjects =
+                        gameObjects.Where(nextGameObject => IsDamaged(gameObject, nextGameObject));
 
-                    foreach (ObjectOnGameField nextObjectOnGameField in damageableObjectsList)
+                    foreach (GameObject nextGameObject in damageableObjects)
                     {
-                        int objectOnGameFieldHealth = objectOnGameField.Health;
+                        int gameObjectHealth = gameObject.Health;
 
-                        objectOnGameField.TakeDamage(nextObjectOnGameField.Health);
-                        nextObjectOnGameField.TakeDamage(objectOnGameFieldHealth);
+                        gameObject.TakeDamage(nextGameObject.Health);
+                        nextGameObject.TakeDamage(gameObjectHealth);
 
-                        if (objectOnGameField.ObjectType != ObjectType.PlayerBullet &&
-                            objectOnGameField.ObjectType != ObjectType.PlayerShip ||
-                            nextObjectOnGameField.ObjectType != ObjectType.BomberShip &&
-                            nextObjectOnGameField.ObjectType != ObjectType.ChaserShip ||
-                            nextObjectOnGameField.Health >= 1)
+                        if (gameObject.ObjectType != ObjectType.PlayerBullet &&
+                            gameObject.ObjectType != ObjectType.PlayerShip ||
+                            nextGameObject.ObjectType != ObjectType.BomberShip &&
+                            nextGameObject.ObjectType != ObjectType.ChaserShip ||
+                            nextGameObject.Health >= 1)
                             continue;
 
                         score++;
@@ -97,24 +95,17 @@ namespace AirForce
                 }
                 else
                 {
-                    blastList.Add(new Point(objectOnGameField.PositionX, objectOnGameField.PositionY));
+                    blasts.Add(new Point(gameObject.PositionX, gameObject.PositionY));
 
                     if (i == 0)
                         continue;
 
-                    objectsOnGameFieldList.RemoveAt(i);
+                    gameObjects.RemoveAt(i);
                     i--;
                 }
             }
-        }
 
-        private void AddCreatedObjects()
-        {
-            foreach (ObjectOnGameField createdObject in createdObjectsList)
-            {
-                objectsOnGameFieldList.Add(createdObject);
-            }
-            createdObjectsList.Clear();
+            gameObjects.AddRange(createdObjects);
         }
 
         public void ChangePlayerShipMoveMode(Keys keyCode)
@@ -127,8 +118,7 @@ namespace AirForce
             if (PlayerShip.DelayOfShot > 0) 
                 return;
 
-            objectsOnGameFieldList.Insert(1, new PlayerBullet(PlayerShip.PositionX + PlayerShip.Size / 2,
-                PlayerShip.PositionY));
+            gameObjects.Insert(1, new PlayerBullet(PlayerShip.PositionX + PlayerShip.Size / 2,  PlayerShip.PositionY));
             PlayerShip.SetDelayOfShotDefaultValue();
         }
 
@@ -145,16 +135,16 @@ namespace AirForce
                 switch (Random.Next(1, 5))
                 {
                     case 1:
-                        objectsOnGameFieldList.Add(new ChaserShip(1500, Random.Next(100, 500)));
+                        gameObjects.Add(new ChaserShip(1500, Random.Next(100, 500)));
                         break;
                     case 2:
-                        objectsOnGameFieldList.Add(new BomberShip(1500, Random.Next(100, 500)));
+                        gameObjects.Add(new BomberShip(1500, Random.Next(100, 500)));
                         break;
                     case 3:
-                        objectsOnGameFieldList.Add(new Meteor(Random.Next(1400, 1500), 0));
+                        gameObjects.Add(new Meteor(Random.Next(1400, 1500), 0));
                         break;
                     case 4:
-                        objectsOnGameFieldList.Add(new Bird(1500, Random.Next(500, 700)));
+                        gameObjects.Add(new Bird(1500, Random.Next(500, 700)));
                         break;
                 }
         }
@@ -186,11 +176,8 @@ namespace AirForce
 
         private void DrawBlast(Graphics graphics)
         {
-            if(blastList.Count > 0)
-                foreach (var blast in blastList)
-                {
-                    graphics.DrawImage(Properties.Resources.Blast, blast.X - 5, blast.Y - 5, 10, 10);
-                }
+            foreach (Point blast in blasts)
+                graphics.DrawImage(Properties.Resources.Blast, blast.X - 5, blast.Y - 5, 10, 10);
 
         }
 
@@ -200,7 +187,7 @@ namespace AirForce
                 PlayerShip.PositionX - PlayerShip.Size / 2, PlayerShip.PositionY - PlayerShip.Size / 2,
                 PlayerShip.Size, PlayerShip.Size);
 
-            foreach (ObjectOnGameField objectOnGameField in objectsOnGameFieldList)
+            foreach (GameObject objectOnGameField in gameObjects)
                 graphics.DrawImage(objectOnGameField.Bitmap,
                     objectOnGameField.PositionX - objectOnGameField.Size / 2,
                     objectOnGameField.PositionY - objectOnGameField.Size / 2,
@@ -280,11 +267,11 @@ namespace AirForce
                 }
             };
 
-        private bool IsDamaged(ObjectOnGameField firstObjectOnGame, ObjectOnGameField secondObjectOnGameField)
+        private bool IsDamaged(GameObject firstGameObjectOnGame, GameObject secondGameObject)
         {
-            return intersectTable[firstObjectOnGame.ObjectType].Contains(secondObjectOnGameField.ObjectType) &&
-                   firstObjectOnGame.IsIntersection(secondObjectOnGameField) &&
-                   secondObjectOnGameField.Health > 0;
+            return intersectTable[firstGameObjectOnGame.ObjectType].Contains(secondGameObject.ObjectType) &&
+                   firstGameObjectOnGame.IsIntersection(secondGameObject) &&
+                   secondGameObject.Health > 0;
         }
     }
 }

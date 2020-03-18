@@ -2,7 +2,7 @@
 
 namespace AirForce
 {
-    internal class PlayerBullet : ObjectOnGameField
+    internal class PlayerBullet : GameObject
     {
         public PlayerBullet(int positionX, int positionY)
         {
@@ -14,9 +14,9 @@ namespace AirForce
             Size = 14;
         }
 
-        public override void Move(List<ObjectOnGameField> objectOnGameFieldsList, out List<ObjectOnGameField> createdObjectsList)
+        public override void Move(List<GameObject> gameObjects, out List<GameObject> createdObjects)
         {
-            createdObjectsList = new List<ObjectOnGameField>();
+            createdObjects = new List<GameObject>();
             PositionX += 8;
         }
     }

@@ -2,7 +2,7 @@
 
 namespace AirForce
 {
-    internal class Ground : ObjectOnGameField
+    internal class Ground : GameObject
     {
         public int Width { get; }
         public int Height { get; }
@@ -19,9 +19,9 @@ namespace AirForce
             Height = 100;
         }
 
-        public override void Move(List<ObjectOnGameField> objectOnGameFieldsList, out List<ObjectOnGameField> createdObjectsList)
+        public override void Move(List<GameObject> gameObjects, out List<GameObject> createdObjects)
         {
-            createdObjectsList = new List<ObjectOnGameField>();
+            createdObjects = new List<GameObject>();
         }
     }
 }

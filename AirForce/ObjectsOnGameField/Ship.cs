@@ -2,13 +2,13 @@
 
 namespace AirForce
 {
-    internal class Ship : ObjectOnGameField
+    internal class Ship : GameObject
     {
         public int DelayOfShot { get; protected set; }
 
-        public override void Move(List<ObjectOnGameField> objectOnGameFieldsList, out List<ObjectOnGameField> createdObjectsList)
+        public override void Move(List<GameObject> gameObjects, out List<GameObject> createdObjects)
         {
-            createdObjectsList = new List<ObjectOnGameField>();
+            createdObjects = new List<GameObject>();
             PositionX -= 6;
         }
 

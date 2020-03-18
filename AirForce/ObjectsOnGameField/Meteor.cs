@@ -1,9 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace AirForce
 {
-    internal class Meteor : ObjectOnGameField
+    internal class Meteor : GameObject
     {
         public Meteor(int positionX, int positionY)
         {
@@ -15,9 +14,9 @@ namespace AirForce
             Health = 10;
         }
 
-        public override void Move(List<ObjectOnGameField> objectOnGameFieldsList, out List<ObjectOnGameField> createdObjectsList)
+        public override void Move(List<GameObject> gameObjects, out List<GameObject> createdObjects)
         {
-            createdObjectsList = new List<ObjectOnGameField>();
+            createdObjects = new List<GameObject>();
             PositionX -= 10;
             PositionY += 4;
         }

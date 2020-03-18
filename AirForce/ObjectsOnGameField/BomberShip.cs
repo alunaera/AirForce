@@ -17,21 +17,21 @@ namespace AirForce
             Size = 80;
         }
 
-        public override void Move(List<ObjectOnGameField> objectOnGameFieldsList, out List<ObjectOnGameField> createdObjectsList)
+        public override void Move(List<GameObject> gameObjects, out List<GameObject> createdObjects)
         {
             IncreaseDelayOfShot(30);
 
-            createdObjectsList = new List<ObjectOnGameField>();
+            createdObjects = new List<GameObject>();
 
-            ObjectOnGameField playerShip = objectOnGameFieldsList.First();
+            GameObject playerShip = gameObjects.First();
 
             if (Math.Abs(PositionY - playerShip.PositionY) <= playerShip.Size && DelayOfShot == 0)
             {
-                createdObjectsList.Add(new BomberShipBullet(PositionX - Size, PositionY));
+                createdObjects.Add(new BomberShipBullet(PositionX - Size, PositionY));
                 SetDelayOfShotDefaultValue();
             }
 
-            PositionX -= 4;
+            PositionX -= 6;
         }
     }
 }
