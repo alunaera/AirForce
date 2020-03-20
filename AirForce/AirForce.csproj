@@ -46,6 +46,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Blast.cs" />
     <Compile Include="ObjectsOnGameField\Bird.cs" />
     <Compile Include="ObjectsOnGameField\BomberShip.cs" />
     <Compile Include="ObjectsOnGameField\BomberShipBullet.cs" />
@@ -119,6 +120,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Blast.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\explosion.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -17,7 +17,7 @@ namespace AirForce
         private PlayerShip PlayerShip => (PlayerShip)gameObjects[0];
         private Ground ground;
         private List<GameObject> gameObjects;
-        private List<Point> blasts;
+        private List<Blast> blasts;
 
         public event Action Defeat = delegate { };
 
@@ -29,7 +29,7 @@ namespace AirForce
 
             ground = new Ground();
             gameObjects = new List<GameObject> {new PlayerShip()};
-            blasts = new List<Point>();
+            blasts = new List<Blast>();
         }
 
         public void Update()
@@ -37,7 +37,10 @@ namespace AirForce
             if (IsDefeat())
                 Defeat();
 
-            blasts.Clear();
+            foreach (Blast blast in blasts)
+                blast.SetNextStage();
+
+            blasts.RemoveAll(blast => blast.StageOfBlast > 4);
 
             MoveObjectsOnGameField();
 
@@ -68,31 +71,30 @@ namespace AirForce
                 if (gameObject.PositionY + gameObject.Size / 2 >= ground.PositionY + 5)
                     gameObject.TakeDamage(ground.Health);
 
-                if (gameObject.Health > 0)
+                if (gameObject.Health <= 0)
+                    continue;
+
+                var damageableObjects =
+                    gameObjects.Where(nextGameObject => IsDamaged(gameObject, nextGameObject));
+
+                foreach (GameObject nextGameObject in damageableObjects)
                 {
-                    var damageableObjects =
-                        gameObjects.Where(nextGameObject => IsDamaged(gameObject, nextGameObject));
+                    int gameObjectHealth = gameObject.Health;
 
-                    foreach (GameObject nextGameObject in damageableObjects)
-                    {
-                        int gameObjectHealth = gameObject.Health;
+                    gameObject.TakeDamage(nextGameObject.Health);
+                    nextGameObject.TakeDamage(gameObjectHealth);
 
-                        gameObject.TakeDamage(nextGameObject.Health);
-                        nextGameObject.TakeDamage(gameObjectHealth);
+                    if(gameObject.Health <=0 || nextGameObject.Health <= 0)
+                        blasts.Add(new Blast(GetMiddleOfVector(gameObject, nextGameObject)));
 
-                        if (gameObject.ObjectType != ObjectType.PlayerBullet &&
-                            gameObject.ObjectType != ObjectType.PlayerShip ||
-                            nextGameObject.ObjectType != ObjectType.BomberShip &&
-                            nextGameObject.ObjectType != ObjectType.ChaserShip ||
-                            nextGameObject.Health >= 1)
-                            continue;
+                    if (gameObject.ObjectType != ObjectType.PlayerBullet &&
+                        gameObject.ObjectType != ObjectType.PlayerShip ||
+                        nextGameObject.ObjectType != ObjectType.BomberShip &&
+                        nextGameObject.ObjectType != ObjectType.ChaserShip ||
+                        nextGameObject.Health >= 1)
+                        continue;
 
-                        score++;
-                    }
-                }
-                else
-                {
-                    blasts.Add(new Point(gameObject.PositionX, gameObject.PositionY));
+                    score++;
                 }
             }
 
@@ -146,6 +148,14 @@ namespace AirForce
             return PlayerShip.Health < 1;
         }
 
+        private Point GetMiddleOfVector(GameObject firstGameObject, GameObject secondGameObject)
+        {
+            int positionX = (firstGameObject.PositionX + secondGameObject.PositionX) / 2;
+            int positionY = (firstGameObject.PositionY + secondGameObject.PositionY) / 2;
+
+            return new Point(positionX, positionY);
+        }
+
         public void Draw(Graphics graphics)
         {
             DrawBackground(graphics);
@@ -168,9 +178,8 @@ namespace AirForce
 
         private void DrawBlast(Graphics graphics)
         {
-            foreach (Point blast in blasts)
-                graphics.DrawImage(Properties.Resources.Blast, blast.X - 5, blast.Y - 5, 10, 10);
-
+            foreach (Blast blast in blasts)
+                blast.Draw(graphics);
         }
 
         private void DrawObjectsOnGameField(Graphics graphics)
