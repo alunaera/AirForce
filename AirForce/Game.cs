@@ -34,9 +34,6 @@ namespace AirForce
 
         public void Update()
         {
-            if (IsDefeat())
-                Defeat();
-
             foreach (Blast blast in blasts)
                 blast.SetNextStage();
 
@@ -46,6 +43,9 @@ namespace AirForce
 
             if (gameObjects.Count(gameObject => gameObject.ObjectType != ObjectType.PlayerBullet) < 2)
                 GenerateEnemies();
+
+            if (IsDefeat())
+                Defeat();
         }
 
         private void MoveObjectsOnGameField()
@@ -57,44 +57,36 @@ namespace AirForce
 
             foreach (GameObject gameObject in gameObjects)
             {
-                if (gameObject.ObjectType != ObjectType.PlayerBullet)
+                if (gameObject.PositionX - gameObject.Size / 2 < 0 ||
+                    gameObject.PositionX > gameFieldWidth ||
+                    gameObject.PositionY + gameObject.Size / 2 >= ground.PositionY + 5 &&
+                    gameObject.ObjectType != ObjectType.Bird)
                 {
-                    if (gameObject.PositionX + gameObject.Size < 0)
-                        gameObject.Destroy();
-                }
-                else
-                {
-                    if (gameObject.PositionX + gameObject.Size > gameFieldWidth)
-                        gameObject.Destroy();
-                }
-
-                if (gameObject.PositionY + gameObject.Size / 2 >= ground.PositionY + 5)
-                    gameObject.TakeDamage(ground.Health);
-
-                if (gameObject.Health <= 0)
+                    gameObject.Destroy();
                     continue;
+                }
 
-                var damageableObjects =
-                    gameObjects.Where(nextGameObject => IsDamaged(gameObject, nextGameObject));
-
-                foreach (GameObject nextGameObject in damageableObjects)
+                foreach (GameObject nextGameObject in gameObjects)
                 {
+                    if (!CanIntersect(gameObject, nextGameObject) || 
+                        !gameObject.IntersectionWith(nextGameObject) ||
+                        nextGameObject.Health <= 0)
+                        continue;
+
                     int gameObjectHealth = gameObject.Health;
 
                     gameObject.TakeDamage(nextGameObject.Health);
                     nextGameObject.TakeDamage(gameObjectHealth);
 
-                    if(gameObject.Health <=0 || nextGameObject.Health <= 0)
-                        blasts.Add(new Blast(GetMiddleOfVector(gameObject, nextGameObject)));
+                    if (gameObject.Health <= 0 || nextGameObject.Health <= 0)
+                        blasts.Add(new Blast(gameObject.GetMiddleOfVector(nextGameObject)));
 
-                    if (gameObject.ObjectType != ObjectType.PlayerBullet &&
-                        gameObject.ObjectType != ObjectType.PlayerShip ||
-                        nextGameObject.ObjectType != ObjectType.BomberShip &&
-                        nextGameObject.ObjectType != ObjectType.ChaserShip ||
-                        nextGameObject.Health >= 1)
-                        continue;
-
-                    score++;
+                    if (nextGameObject.Health <= 0 &&
+                        (gameObject.ObjectType == ObjectType.PlayerBullet ||
+                         gameObject.ObjectType == ObjectType.PlayerShip) &&
+                        (nextGameObject.ObjectType == ObjectType.BomberShip ||
+                         nextGameObject.ObjectType == ObjectType.ChaserShip))
+                        score++;
                 }
             }
 
@@ -102,12 +94,12 @@ namespace AirForce
             gameObjects.AddRange(createdObjects);
         }
 
-        public void ChangePlayerShipMoveMode(Keys keyCode)
+        public void StartMovingPlayerShip(Keys keyCode)
         {
-            PlayerShip.ChangeMoveMode(keyCode);
+            PlayerShip.StartMoving(keyCode);
         }
 
-        public void MakeShot()
+        public void StartShooting()
         {
             if (PlayerShip.DelayOfShot > 0) 
                 return;
@@ -118,7 +110,7 @@ namespace AirForce
 
         public void SetPlayerShipMoveModeDefaultValue(Keys keyCode)
         {
-            PlayerShip.SetMoveModeDefaultValue(keyCode);
+            PlayerShip.StopMoving(keyCode);
         }
 
         private void GenerateEnemies()
@@ -138,7 +130,7 @@ namespace AirForce
                         gameObjects.Add(new Meteor(Random.Next(1400, 1500), 0));
                         break;
                     case 4:
-                        gameObjects.Add(new Bird(1500, Random.Next(500, 700)));
+                        gameObjects.Add(new Bird(1500, Random.Next(550, 850)));
                         break;
                 }
         }
@@ -146,14 +138,6 @@ namespace AirForce
         private bool IsDefeat()
         {
             return PlayerShip.Health < 1;
-        }
-
-        private Point GetMiddleOfVector(GameObject firstGameObject, GameObject secondGameObject)
-        {
-            int positionX = (firstGameObject.PositionX + secondGameObject.PositionX) / 2;
-            int positionY = (firstGameObject.PositionY + secondGameObject.PositionY) / 2;
-
-            return new Point(positionX, positionY);
         }
 
         public void Draw(Graphics graphics)
@@ -184,10 +168,6 @@ namespace AirForce
 
         private void DrawObjectsOnGameField(Graphics graphics)
         {
-            graphics.DrawImage(PlayerShip.Bitmap,
-                PlayerShip.PositionX - PlayerShip.Size / 2, PlayerShip.PositionY - PlayerShip.Size / 2,
-                PlayerShip.Size, PlayerShip.Size);
-
             foreach (GameObject objectOnGameField in gameObjects)
                 graphics.DrawImage(objectOnGameField.Bitmap,
                     objectOnGameField.PositionX - objectOnGameField.Size / 2,
@@ -234,11 +214,9 @@ namespace AirForce
 
         };
 
-        private bool IsDamaged(GameObject a, GameObject b)
+        private bool CanIntersect(GameObject firstGameObject, GameObject secondGameObject)
         {
-            return intersectTable[a.ObjectType].HasFlag(b.ObjectType) &&
-                   a.IsIntersection(b) &&
-                   b.Health > 0;
+            return intersectTable[firstGameObject.ObjectType].HasFlag(secondGameObject.ObjectType);
         }
     }
 }

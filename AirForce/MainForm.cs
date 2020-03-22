@@ -6,7 +6,7 @@ namespace AirForce
     public partial class MainForm : Form
     {
         private readonly Game game = new Game();
-        private bool isPressedSpace;
+        private bool isPlayerShooting;
 
         public MainForm()
         {
@@ -17,7 +17,7 @@ namespace AirForce
             game.Defeat += () =>
             {
                 Timer.Enabled = false;
-                isPressedSpace = false;
+                isPlayerShooting = false;
                 MessageBox.Show("Game over");
                 game.StartGame(1535, 900);
                 Timer.Enabled = true;
@@ -34,8 +34,8 @@ namespace AirForce
 
         private void TickTimer(object sender, System.EventArgs e)
         {
-            if (isPressedSpace)
-                game.MakeShot();
+            if (isPlayerShooting)
+                game.StartShooting();
 
             game.Update();
             gameField.Refresh();
@@ -49,10 +49,10 @@ namespace AirForce
                 case Keys.D:
                 case Keys.S:
                 case Keys.A:
-                    game.ChangePlayerShipMoveMode(e.KeyCode);
+                    game.StartMovingPlayerShip(e.KeyCode);
                     break;
                 case Keys.Space:
-                    isPressedSpace = true;
+                    isPlayerShooting = true;
                     break;
             }
         }
@@ -68,7 +68,7 @@ namespace AirForce
                     game.SetPlayerShipMoveModeDefaultValue(e.KeyCode);
                     break;
                 case Keys.Space:
-                    isPressedSpace = false;
+                    isPlayerShooting = false;
                     break;
             }
         }

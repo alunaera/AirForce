@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Drawing;
 
 namespace AirForce
 {
@@ -12,7 +7,7 @@ namespace AirForce
         private readonly int positionX;
         private readonly int positionY;
         private readonly int size;
-        private readonly Bitmap bitmap;
+        private readonly Bitmap[] bitmaps = { Crop(1), Crop(2), Crop(3), Crop(4) };
 
         public int StageOfBlast;
 
@@ -21,7 +16,6 @@ namespace AirForce
             positionX = position.X;
             positionY = position.Y;
             size = 20;
-            bitmap = Properties.Resources.Blast;
             StageOfBlast = 1;
         }
 
@@ -32,12 +26,15 @@ namespace AirForce
 
         public void Draw(Graphics graphics)
         {
-            graphics.DrawImage(Crop(new Rectangle((StageOfBlast - 1) * bitmap.Width / 4, 0, bitmap.Width / 4, bitmap.Height)),
-                positionX - 5, positionY - 5, size, size);
+            graphics.DrawImage(bitmaps[StageOfBlast - 1], positionX - 5, positionY - 5, size, size);
         }
 
-        private Bitmap Crop(Rectangle selection)
+        private static Bitmap Crop(int sectorNumber)
         {
+            Bitmap bitmap = Properties.Resources.Blast;
+            Rectangle selection = new Rectangle((sectorNumber - 1) * bitmap.Width / 4, 0, bitmap.Width / 4,
+                bitmap.Height);
+
             return bitmap.Clone(selection, bitmap.PixelFormat);
         }
     }

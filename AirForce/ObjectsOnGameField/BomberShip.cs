@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace AirForce
 {
@@ -23,12 +22,16 @@ namespace AirForce
 
             createdObjects = new List<GameObject>();
 
-            GameObject playerShip = gameObjects.First();
-
-            if (Math.Abs(PositionY - playerShip.PositionY) <= playerShip.Size && DelayOfShot == 0)
+            foreach (GameObject gameObject in gameObjects)
             {
-                createdObjects.Add(new BomberShipBullet(PositionX - Size, PositionY));
-                ReloadWeapon();
+                if (gameObject.ObjectType == ObjectType.PlayerShip &&
+                    Math.Abs(PositionY - gameObject.PositionY) <= gameObject.Size && DelayOfShot == 0)
+                {
+                    createdObjects.Add(new BomberShipBullet(PositionX - Size, PositionY));
+                    ReloadWeapon();
+                }
+                else
+                    break;
             }
 
             PositionX -= 6;

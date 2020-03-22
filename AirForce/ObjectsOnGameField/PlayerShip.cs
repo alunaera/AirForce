@@ -48,7 +48,7 @@ namespace AirForce
             IncreaseDelayOfShot(15);
         }
 
-        public void ChangeMoveMode(Keys keyCode)
+        public void StartMoving(Keys keyCode)
         {
             switch (keyCode)
             {
@@ -67,7 +67,7 @@ namespace AirForce
             }
         }
 
-        public void SetMoveModeDefaultValue(Keys keyCode)
+        public void StopMoving(Keys keyCode)
         {
             switch (keyCode)
             {

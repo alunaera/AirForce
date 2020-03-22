@@ -25,9 +25,17 @@ namespace AirForce
             Health -= Math.Min(Health, gameObjectHealth);
         }
 
-        public bool IsIntersection(GameObject gameObject)
+        public bool IntersectionWith(GameObject gameObject)
         {
             return GetDistanceToObject(gameObject.PositionX, gameObject.PositionY) <= (Size + gameObject.Size) / 2;
+        }
+
+        public Point GetMiddleOfVector(GameObject gameObject)
+        {
+            int positionX = (PositionX + gameObject.PositionX) / 2;
+            int positionY = (PositionY + gameObject.PositionY) / 2;
+
+            return new Point(positionX, positionY);
         }
 
         protected int GetDistanceToObject(int objectX, int objectY)
