@@ -25,7 +25,7 @@ namespace AirForce
             Health -= Math.Min(Health, gameObjectHealth);
         }
 
-        public bool IntersectionWith(GameObject gameObject)
+        public bool IntersectsWith(GameObject gameObject)
         {
             return GetDistanceToObject(gameObject.PositionX, gameObject.PositionY) <= (Size + gameObject.Size) / 2;
         }

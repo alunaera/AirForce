@@ -7,7 +7,7 @@ namespace AirForce
         private readonly int positionX;
         private readonly int positionY;
         private readonly int size;
-        private readonly Bitmap[] bitmaps = { Crop(1), Crop(2), Crop(3), Crop(4) };
+        private static readonly Bitmap[] Bitmaps = { Crop(1), Crop(2), Crop(3), Crop(4) };
 
         public int StageOfBlast;
 
@@ -16,7 +16,7 @@ namespace AirForce
             positionX = position.X;
             positionY = position.Y;
             size = 20;
-            StageOfBlast = 1;
+            StageOfBlast = 0;
         }
 
         public void SetNextStage()
@@ -26,7 +26,7 @@ namespace AirForce
 
         public void Draw(Graphics graphics)
         {
-            graphics.DrawImage(bitmaps[StageOfBlast - 1], positionX - 5, positionY - 5, size, size);
+            graphics.DrawImage(Bitmaps[StageOfBlast], positionX - 5, positionY - 5, size, size);
         }
 
         private static Bitmap Crop(int sectorNumber)

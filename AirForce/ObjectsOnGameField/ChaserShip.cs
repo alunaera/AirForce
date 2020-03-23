@@ -20,13 +20,13 @@ namespace AirForce
         {
             createdObjects = new List<GameObject>();
 
-            var playerShipBullets =
+            GameObject playerShipBullet =
                 gameObjects.Where(gameObject => gameObject.ObjectType == ObjectType.PlayerBullet)
                            .OrderBy(gameObject => GetDistanceToObject(gameObject.PositionX, gameObject.PositionY))
                            .FirstOrDefault();
 
-            if (playerShipBullets != null && Math.Abs(PositionY - playerShipBullets.PositionY) <= Size)
-                PositionY += 3 * Math.Sign(PositionY - playerShipBullets.PositionY);
+            if (playerShipBullet != null && Math.Abs(PositionY - playerShipBullet.PositionY) <= Size)
+                PositionY += 3 * Math.Sign(PositionY - playerShipBullet.PositionY);
 
             PositionX -= 8;
         }

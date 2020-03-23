@@ -65,7 +65,7 @@ namespace AirForce
                 case Keys.D:
                 case Keys.S:
                 case Keys.A:
-                    game.SetPlayerShipMoveModeDefaultValue(e.KeyCode);
+                    game.StopMovingPlayerShip(e.KeyCode);
                     break;
                 case Keys.Space:
                     isPlayerShooting = false;

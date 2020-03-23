@@ -37,7 +37,7 @@ namespace AirForce
             foreach (Blast blast in blasts)
                 blast.SetNextStage();
 
-            blasts.RemoveAll(blast => blast.StageOfBlast > 4);
+            blasts.RemoveAll(blast => blast.StageOfBlast > 3);
 
             MoveObjectsOnGameField();
 
@@ -60,7 +60,7 @@ namespace AirForce
                 if (gameObject.PositionX - gameObject.Size / 2 < 0 ||
                     gameObject.PositionX > gameFieldWidth ||
                     gameObject.PositionY + gameObject.Size / 2 >= ground.PositionY + 5 &&
-                    gameObject.ObjectType != ObjectType.Bird)
+                    CanIntersect(gameObject, ground))
                 {
                     gameObject.Destroy();
                     continue;
@@ -69,7 +69,7 @@ namespace AirForce
                 foreach (GameObject nextGameObject in gameObjects)
                 {
                     if (!CanIntersect(gameObject, nextGameObject) || 
-                        !gameObject.IntersectionWith(nextGameObject) ||
+                        !gameObject.IntersectsWith(nextGameObject) ||
                         nextGameObject.Health <= 0)
                         continue;
 
@@ -96,21 +96,49 @@ namespace AirForce
 
         public void StartMovingPlayerShip(Keys keyCode)
         {
-            PlayerShip.StartMoving(keyCode);
+            switch (keyCode)
+            {
+                case Keys.W:
+                    PlayerShip.MoveMode |= MoveMode.Up;
+                    break;
+                case Keys.D:
+                    PlayerShip.MoveMode |= MoveMode.Right;
+                    break;
+                case Keys.S:
+                    PlayerShip.MoveMode |= MoveMode.Down;
+                    break;
+                case Keys.A:
+                    PlayerShip.MoveMode |= MoveMode.Left;
+                    break;
+            }
+        }
+
+        public void StopMovingPlayerShip(Keys keyCode)
+        {
+            switch (keyCode)
+            {
+                case Keys.W:
+                    PlayerShip.MoveMode ^= MoveMode.Up;
+                    break;
+                case Keys.D:
+                    PlayerShip.MoveMode ^= MoveMode.Right;
+                    break;
+                case Keys.S:
+                    PlayerShip.MoveMode ^= MoveMode.Down;
+                    break;
+                case Keys.A:
+                    PlayerShip.MoveMode ^= MoveMode.Left;
+                    break;
+            }
         }
 
         public void StartShooting()
         {
-            if (PlayerShip.DelayOfShot > 0) 
+            if (PlayerShip.DelayOfShot > 0)
                 return;
 
-            gameObjects.Add(new PlayerBullet(PlayerShip.PositionX + PlayerShip.Size / 2,  PlayerShip.PositionY));
+            gameObjects.Add(new PlayerBullet(PlayerShip.PositionX + PlayerShip.Size / 2, PlayerShip.PositionY));
             PlayerShip.ReloadWeapon();
-        }
-
-        public void SetPlayerShipMoveModeDefaultValue(Keys keyCode)
-        {
-            PlayerShip.StopMoving(keyCode);
         }
 
         private void GenerateEnemies()
@@ -121,16 +149,16 @@ namespace AirForce
                 switch (Random.Next(1, 5))
                 {
                     case 1:
-                        gameObjects.Add(new ChaserShip(1500, Random.Next(100, 500)));
+                        gameObjects.Add(new ChaserShip(gameFieldWidth, Random.Next(100, gameFieldHeight - 350)));
                         break;
                     case 2:
-                        gameObjects.Add(new BomberShip(1500, Random.Next(100, 500)));
+                        gameObjects.Add(new BomberShip(gameFieldWidth, Random.Next(100, gameFieldHeight - 350)));
                         break;
                     case 3:
-                        gameObjects.Add(new Meteor(Random.Next(1400, 1500), 0));
+                        gameObjects.Add(new Meteor(Random.Next(gameFieldWidth - 100, gameFieldWidth), 0));
                         break;
                     case 4:
-                        gameObjects.Add(new Bird(1500, Random.Next(550, 850)));
+                        gameObjects.Add(new Bird(gameFieldWidth, Random.Next(gameFieldHeight - 300, gameFieldHeight - 50)));
                         break;
                 }
         }

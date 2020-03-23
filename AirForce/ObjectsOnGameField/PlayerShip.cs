@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Windows.Forms;
 
 namespace AirForce
 {
@@ -7,7 +6,7 @@ namespace AirForce
     {
         private const int MaxPositionX = 1535;
 
-        private MoveMode moveMode;
+        public MoveMode MoveMode;
 
         public PlayerShip()
         {
@@ -24,13 +23,13 @@ namespace AirForce
         {
             createdObjects = new List<GameObject>();
 
-            if (moveMode.HasFlag(MoveMode.Left))
+            if (MoveMode.HasFlag(MoveMode.Left))
                 PositionX -= 8;
-            if (moveMode.HasFlag(MoveMode.Right))
+            if (MoveMode.HasFlag(MoveMode.Right))
                 PositionX += 8;
-            if (moveMode.HasFlag(MoveMode.Up))
+            if (MoveMode.HasFlag(MoveMode.Up))
                 PositionY -= 8;
-            if (moveMode.HasFlag(MoveMode.Down))
+            if (MoveMode.HasFlag(MoveMode.Down))
                 PositionY += 8;
             
             PositionX = PositionX + Size / 2 > MaxPositionX
@@ -46,44 +45,6 @@ namespace AirForce
                 : PositionY;
 
             IncreaseDelayOfShot(15);
-        }
-
-        public void StartMoving(Keys keyCode)
-        {
-            switch (keyCode)
-            {
-                case Keys.W:
-                    moveMode |= MoveMode.Up;
-                    break;
-                case Keys.D:
-                    moveMode |= MoveMode.Right;
-                    break;
-                case Keys.S:
-                    moveMode |= MoveMode.Down;
-                    break;
-                case Keys.A:
-                    moveMode |= MoveMode.Left;
-                    break;
-            }
-        }
-
-        public void StopMoving(Keys keyCode)
-        {
-            switch (keyCode)
-            {
-                case Keys.W:
-                    moveMode ^= MoveMode.Up;
-                    break;
-                case Keys.D:
-                    moveMode ^= MoveMode.Right;
-                    break;
-                case Keys.S:
-                    moveMode ^= MoveMode.Down;
-                    break;
-                case Keys.A:
-                    moveMode ^= MoveMode.Left;
-                    break;
-            }
         }
     }
 }
