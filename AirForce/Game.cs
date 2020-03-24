@@ -27,7 +27,7 @@ namespace AirForce
             score = 0;
 
             ground = new Ground(0, gameFieldHeight - 120);
-            gameObjects = new List<GameObject> {new PlayerShip()};
+            gameObjects = new List<GameObject> {new PlayerShip(gameFieldWidth)};
             blasts = new List<Blast>();
         }
 
@@ -38,54 +38,69 @@ namespace AirForce
 
             blasts.RemoveAll(blast => blast.StageOfBlast > 3);
 
-            MoveObjectsOnGameField();
+            MoveGameObjects();
 
-            if (gameObjects.Count(gameObject => gameObject.ObjectType != ObjectType.PlayerBullet) < 2)
+            if (gameObjects.Count(gameObject =>
+                                  gameObject.ObjectType != ObjectType.PlayerBullet &&
+                                  gameObject.ObjectType != ObjectType.BomberShipBullet) < 2)
                 GenerateEnemies();
 
-            if (IsDefeat())
+            if (PlayerShip.Health < 1)
                 Defeat();
         }
 
-        private void MoveObjectsOnGameField()
+        private void MoveGameObjects()
         { 
             List<GameObject> createdObjects = new List<GameObject>();
 
             foreach (GameObject gameObject in gameObjects)
-                gameObject.Move(gameObjects, out createdObjects);
+                gameObject.Update(gameObjects, out createdObjects);
+
+            gameObjects.RemoveAll(gameObject => gameObject.ObjectType != ObjectType.PlayerShip &&
+                                                    (gameObject.PositionX + gameObject.Size / 2 < 0 ||
+                                                     gameObject.PositionX > gameFieldWidth));
 
             foreach (GameObject gameObject in gameObjects)
             {
-                if (gameObject.PositionX + gameObject.Size / 2 < 0 ||
-                    gameObject.PositionX > gameFieldWidth ||
-                    gameObject.PositionY + gameObject.Size / 2 >= ground.PositionY + 5 &&
+                if (gameObject.PositionY + gameObject.Size / 2 >= ground.PositionY + 5 &&
                     CanIntersect(gameObject, ground))
                 {
                     gameObject.Destroy();
+                    blasts.Add(new Blast(new Point(gameObject.PositionX, gameObject.PositionY + gameObject.Size / 2)));
                     continue;
                 }
 
                 foreach (GameObject nextGameObject in gameObjects)
                 {
-                    if (!CanIntersect(gameObject, nextGameObject) || 
-                        !gameObject.IntersectsWith(nextGameObject) ||
-                        nextGameObject.Health <= 0)
-                        continue;
+                    if (CanIntersect(gameObject, nextGameObject) &&
+                        gameObject.IntersectsWith(nextGameObject) &&
+                        nextGameObject.Health > 0)
+                    {
+                        int gameObjectHealth = gameObject.Health;
 
-                    int gameObjectHealth = gameObject.Health;
+                        gameObject.TakeDamage(nextGameObject.Health);
+                        nextGameObject.TakeDamage(gameObjectHealth);
 
-                    gameObject.TakeDamage(nextGameObject.Health);
-                    nextGameObject.TakeDamage(gameObjectHealth);
+                        if (gameObject.Health <= 0 || nextGameObject.Health <= 0)
+                            blasts.Add(new Blast(gameObject.GetMiddleOfVector(nextGameObject)));
 
-                    if (gameObject.Health <= 0 || nextGameObject.Health <= 0)
-                        blasts.Add(new Blast(gameObject.GetMiddleOfVector(nextGameObject)));
-
-                    if (nextGameObject.Health <= 0 &&
-                        (gameObject.ObjectType == ObjectType.PlayerBullet ||
-                         gameObject.ObjectType == ObjectType.PlayerShip) &&
-                        (nextGameObject.ObjectType == ObjectType.BomberShip ||
-                         nextGameObject.ObjectType == ObjectType.ChaserShip))
-                        score++;
+                        switch (gameObject.ObjectType)
+                        {
+                            case ObjectType.PlayerShip:
+                            case ObjectType.PlayerBullet:
+                                if (nextGameObject.Health <= 0 &&
+                                    (nextGameObject.ObjectType == ObjectType.BomberShip ||
+                                     nextGameObject.ObjectType == ObjectType.ChaserShip))
+                                    score++;
+                                break;
+                            case ObjectType.ChaserShip:
+                            case ObjectType.BomberShip:
+                                if (gameObject.Health <= 0 &&
+                                    nextGameObject.ObjectType == ObjectType.PlayerBullet)
+                                    score++;
+                                break;
+                        }
+                    }
                 }
             }
 
@@ -95,49 +110,22 @@ namespace AirForce
 
         public void StartMovingPlayerShip(MoveMode moveMode)
         {
-            switch (moveMode)
-            {
-                case MoveMode.Up:
-                    PlayerShip.MoveMode |= MoveMode.Up;
-                    break;
-                case MoveMode.Right:
-                    PlayerShip.MoveMode |= MoveMode.Right;
-                    break;
-                case MoveMode.Down:
-                    PlayerShip.MoveMode |= MoveMode.Down;
-                    break;
-                case MoveMode.Left:
-                    PlayerShip.MoveMode |= MoveMode.Left;
-                    break;
-            }
+            PlayerShip.StartMoving(moveMode);
         }
 
         public void StopMovingPlayerShip(MoveMode moveMode)
         {
-            switch (moveMode)
-            {
-                case MoveMode.Up:
-                    PlayerShip.MoveMode ^= MoveMode.Up;
-                    break;
-                case MoveMode.Right:
-                    PlayerShip.MoveMode ^= MoveMode.Right;
-                    break;
-                case MoveMode.Down:
-                    PlayerShip.MoveMode ^= MoveMode.Down;
-                    break;
-                case MoveMode.Left:
-                    PlayerShip.MoveMode ^= MoveMode.Left;
-                    break;
-            }
+            PlayerShip.StopMoving(moveMode);
         }
 
-        public void StartShooting()
+        public void StartPlayerShipShooting()
         {
-            if (PlayerShip.DelayOfShot > 0)
-                return;
+            PlayerShip.StartShooting();
+        }
 
-            gameObjects.Add(new PlayerBullet(PlayerShip.PositionX + PlayerShip.Size / 2, PlayerShip.PositionY));
-            PlayerShip.ReloadWeapon();
+        public void StopPlayerShipShooting()
+        {
+            PlayerShip.StopShooting();
         }
 
         private void GenerateEnemies()
@@ -160,11 +148,6 @@ namespace AirForce
                         gameObjects.Add(new Bird(gameFieldWidth, Random.Next(gameFieldHeight - 300, gameFieldHeight - 50)));
                         break;
                 }
-        }
-
-        private bool IsDefeat()
-        {
-            return PlayerShip.Health < 1;
         }
 
         public void Draw(Graphics graphics)

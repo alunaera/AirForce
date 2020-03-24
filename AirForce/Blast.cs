@@ -7,7 +7,7 @@ namespace AirForce
         private readonly int positionX;
         private readonly int positionY;
         private readonly int size;
-        private static readonly Bitmap[] Bitmaps = { Crop(1), Crop(2), Crop(3), Crop(4) };
+        private static readonly Bitmap[] Bitmaps = {Crop(0), Crop(1), Crop(2), Crop(3)};
 
         public int StageOfBlast;
 
@@ -32,7 +32,7 @@ namespace AirForce
         private static Bitmap Crop(int sectorNumber)
         {
             Bitmap bitmap = Properties.Resources.Blast;
-            Rectangle selection = new Rectangle((sectorNumber - 1) * bitmap.Width / 4, 0, bitmap.Width / 4,
+            Rectangle selection = new Rectangle(sectorNumber * bitmap.Width / 4, 0, bitmap.Width / 4,
                 bitmap.Height);
 
             return bitmap.Clone(selection, bitmap.PixelFormat);

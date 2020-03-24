@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace AirForce
 {
-    internal class BomberShip : Ship
+    internal class BomberShip : ArmedGameObject
     {
         public BomberShip(int positionX, int positionY)
         {
@@ -17,13 +17,13 @@ namespace AirForce
             Size = 80;
         }
 
-        public override void Move(List<GameObject> gameObjects, out List<GameObject> createdObjects)
+        public override void Update(List<GameObject> gameObjects, out List<GameObject> createdObjects)
         {
-            IncreaseDelayOfShot(30);
+            DecreaseDelayOfShot(30);
 
             createdObjects = new List<GameObject>();
 
-            GameObject playerShip = gameObjects.FirstOrDefault();
+            GameObject playerShip = gameObjects.FirstOrDefault(gameObject => gameObject.ObjectType == ObjectType.PlayerShip);
 
             if (playerShip != null && (Math.Abs(PositionY - playerShip.PositionY) <= playerShip.Size && DelayOfShot == 0))
             {

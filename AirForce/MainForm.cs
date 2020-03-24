@@ -6,7 +6,6 @@ namespace AirForce
     public partial class MainForm : Form
     {
         private readonly Game game = new Game();
-        private bool isPlayerShooting;
 
         public MainForm()
         {
@@ -17,7 +16,7 @@ namespace AirForce
             game.Defeat += () =>
             {
                 Timer.Enabled = false;
-                isPlayerShooting = false;
+                game.StopPlayerShipShooting();
                 MessageBox.Show("Game over");
                 game.StartGame(ClientRectangle.Width, ClientRectangle.Height);
                 Timer.Enabled = true;
@@ -34,9 +33,6 @@ namespace AirForce
 
         private void TickTimer(object sender, System.EventArgs e)
         {
-            if (isPlayerShooting)
-                game.StartShooting();
-
             game.Update();
             gameField.Refresh();
         }
@@ -58,7 +54,7 @@ namespace AirForce
                     game.StartMovingPlayerShip(MoveMode.Left);
                     break;
                 case Keys.Space:
-                    isPlayerShooting = true;
+                    game.StartPlayerShipShooting();
                     break;
             }
         }
@@ -80,7 +76,7 @@ namespace AirForce
                     game.StopMovingPlayerShip(MoveMode.Left);
                     break;
                 case Keys.Space:
-                    isPlayerShooting = false;
+                    game.StopPlayerShipShooting();
                     break;
             }
         }

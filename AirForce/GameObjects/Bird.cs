@@ -14,7 +14,7 @@ namespace AirForce
             Size = 30;
         }
 
-        public override void Move(List<GameObject> gameObjects, out List<GameObject> createdObjects)
+        public override void Update(List<GameObject> gameObjects, out List<GameObject> createdObjects)
         {
             createdObjects = new List<GameObject>();
 
