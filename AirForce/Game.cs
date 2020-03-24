@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using System.Windows.Forms;
 
 namespace AirForce
 {
@@ -27,7 +26,7 @@ namespace AirForce
             this.gameFieldHeight = gameFieldHeight;
             score = 0;
 
-            ground = new Ground();
+            ground = new Ground(0, gameFieldHeight - 120);
             gameObjects = new List<GameObject> {new PlayerShip()};
             blasts = new List<Blast>();
         }
@@ -57,7 +56,7 @@ namespace AirForce
 
             foreach (GameObject gameObject in gameObjects)
             {
-                if (gameObject.PositionX - gameObject.Size / 2 < 0 ||
+                if (gameObject.PositionX + gameObject.Size / 2 < 0 ||
                     gameObject.PositionX > gameFieldWidth ||
                     gameObject.PositionY + gameObject.Size / 2 >= ground.PositionY + 5 &&
                     CanIntersect(gameObject, ground))
@@ -94,39 +93,39 @@ namespace AirForce
             gameObjects.AddRange(createdObjects);
         }
 
-        public void StartMovingPlayerShip(Keys keyCode)
+        public void StartMovingPlayerShip(MoveMode moveMode)
         {
-            switch (keyCode)
+            switch (moveMode)
             {
-                case Keys.W:
+                case MoveMode.Up:
                     PlayerShip.MoveMode |= MoveMode.Up;
                     break;
-                case Keys.D:
+                case MoveMode.Right:
                     PlayerShip.MoveMode |= MoveMode.Right;
                     break;
-                case Keys.S:
+                case MoveMode.Down:
                     PlayerShip.MoveMode |= MoveMode.Down;
                     break;
-                case Keys.A:
+                case MoveMode.Left:
                     PlayerShip.MoveMode |= MoveMode.Left;
                     break;
             }
         }
 
-        public void StopMovingPlayerShip(Keys keyCode)
+        public void StopMovingPlayerShip(MoveMode moveMode)
         {
-            switch (keyCode)
+            switch (moveMode)
             {
-                case Keys.W:
+                case MoveMode.Up:
                     PlayerShip.MoveMode ^= MoveMode.Up;
                     break;
-                case Keys.D:
+                case MoveMode.Right:
                     PlayerShip.MoveMode ^= MoveMode.Right;
                     break;
-                case Keys.S:
+                case MoveMode.Down:
                     PlayerShip.MoveMode ^= MoveMode.Down;
                     break;
-                case Keys.A:
+                case MoveMode.Left:
                     PlayerShip.MoveMode ^= MoveMode.Left;
                     break;
             }
@@ -184,8 +183,8 @@ namespace AirForce
 
         private void DrawInterface(Graphics graphics)
         {
-            graphics.DrawString("Score: " + score, font, Brushes.Black, 1370, 10);
-            graphics.DrawString("Player's health: " + PlayerShip.Health, font, Brushes.Black, 1370, 30);
+            graphics.DrawString("Score: " + score, font, Brushes.Black, gameFieldWidth - 165, 10);
+            graphics.DrawString("Player's health: " + PlayerShip.Health, font, Brushes.Black, gameFieldWidth - 165, 30);
         }
 
         private void DrawBlast(Graphics graphics)
