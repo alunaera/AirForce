@@ -19,13 +19,13 @@ namespace AirForce
 
         public override void Update(List<GameObject> gameObjects, out List<GameObject> createdObjects)
         {
-            DecreaseDelayOfShot(30);
+            DecreaseDelayOfShot(3);
 
             createdObjects = new List<GameObject>();
 
             GameObject playerShip = gameObjects.FirstOrDefault(gameObject => gameObject.ObjectType == ObjectType.PlayerShip);
 
-            if (playerShip != null && (Math.Abs(PositionY - playerShip.PositionY) <= playerShip.Size && DelayOfShot == 0))
+            if (playerShip != null && Math.Abs(PositionY - playerShip.PositionY) <= playerShip.Size && DelayOfShot <= 0)
             {
                 createdObjects.Add(new BomberShipBullet(PositionX - Size, PositionY));
                 ReloadWeapon();

@@ -54,11 +54,15 @@ namespace AirForce
             List<GameObject> createdObjects = new List<GameObject>();
 
             foreach (GameObject gameObject in gameObjects)
-                gameObject.Update(gameObjects, out createdObjects);
+            {
+                List<GameObject> createdObjectsByThisGameObject = new List<GameObject>();
+                gameObject.Update(gameObjects, out createdObjectsByThisGameObject);
+                createdObjects.AddRange(createdObjectsByThisGameObject);
+            }
 
             gameObjects.RemoveAll(gameObject => gameObject.ObjectType != ObjectType.PlayerShip &&
-                                                    (gameObject.PositionX + gameObject.Size / 2 < 0 ||
-                                                     gameObject.PositionX > gameFieldWidth));
+                                                (gameObject.PositionX + gameObject.Size / 2 < 0 ||
+                                                 gameObject.PositionX > gameFieldWidth));
 
             foreach (GameObject gameObject in gameObjects)
             {
