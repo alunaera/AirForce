@@ -57,7 +57,7 @@ namespace AirForce
                                                 (gameObject.PositionX + gameObject.Size / 2 < 0 ||
                                                  gameObject.PositionX > gameFieldWidth));
 
-            foreach (GameObject gameObject in gameObjects.Where(gameObject => gameObject.ObjectType != ObjectType.Blast))
+            foreach (GameObject gameObject in gameObjects)
             {
                 if (gameObject.PositionY + gameObject.Size / 2 >= ground.PositionY + 5 &&
                     CanIntersect(gameObject, ground))
@@ -207,7 +207,9 @@ namespace AirForce
                                   ObjectType.BomberShipBullet |
                                   ObjectType.Ground,
 
-            [ObjectType.Bird] = ObjectType.PlayerShip
+            [ObjectType.Bird] = ObjectType.PlayerShip,
+
+            [ObjectType.Blast] = 0
         };
 
         private bool CanIntersect(GameObject firstGameObject, GameObject secondGameObject)
