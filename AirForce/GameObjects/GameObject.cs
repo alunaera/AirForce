@@ -6,8 +6,9 @@ namespace AirForce
 {
     internal abstract class GameObject
     {
+        protected Bitmap Bitmap;
+
         public ObjectType ObjectType { get; protected set; }
-        public Bitmap Bitmap { get; protected set; }
         public int PositionX { get; protected set; }
         public int PositionY { get; protected set; }
         public int Health { get; protected set; }
@@ -20,9 +21,9 @@ namespace AirForce
             Health = 0;
         }
 
-        public void TakeDamage(int gameObjectHealth)
+        public void TakeDamage(int amountOfDamage)
         {
-            Health -= Math.Min(Health, gameObjectHealth);
+            Health -= amountOfDamage;
         }
 
         public bool IntersectsWith(GameObject gameObject)
@@ -44,6 +45,11 @@ namespace AirForce
             double componentY = Math.Pow(PositionY - objectY, 2);
 
             return (int) Math.Sqrt(componentX + componentY);
+        }
+
+        public virtual void Draw(Graphics graphics)
+        {
+            graphics.DrawImage(Bitmap, PositionX - Size / 2, PositionY - Size / 2, Size, Size);
         }
     }
 }

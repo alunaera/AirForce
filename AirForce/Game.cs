@@ -16,7 +16,6 @@ namespace AirForce
         private PlayerShip PlayerShip => (PlayerShip)gameObjects[0];
         private Ground ground;
         private List<GameObject> gameObjects;
-        private List<Blast> blasts;
 
         public event Action Defeat = delegate { };
 
@@ -28,35 +27,29 @@ namespace AirForce
 
             ground = new Ground(0, gameFieldHeight - 120);
             gameObjects = new List<GameObject> {new PlayerShip(gameFieldWidth)};
-            blasts = new List<Blast>();
         }
 
         public void Update()
         {
-            foreach (Blast blast in blasts)
-                blast.SetNextStage();
-
-            blasts.RemoveAll(blast => blast.StageOfBlast > 3);
-
-            MoveGameObjects();
+            UpdateGameObjects();
 
             if (gameObjects.Count(gameObject =>
                                   gameObject.ObjectType != ObjectType.PlayerBullet &&
-                                  gameObject.ObjectType != ObjectType.BomberShipBullet) < 2)
+                                  gameObject.ObjectType != ObjectType.BomberShipBullet &&
+                                  gameObject.ObjectType != ObjectType.Blast) < 2)
                 GenerateEnemies();
 
             if (PlayerShip.Health < 1)
                 Defeat();
         }
 
-        private void MoveGameObjects()
+        private void UpdateGameObjects()
         { 
             List<GameObject> createdObjects = new List<GameObject>();
 
             foreach (GameObject gameObject in gameObjects)
             {
-                List<GameObject> createdObjectsByThisGameObject = new List<GameObject>();
-                gameObject.Update(gameObjects, out createdObjectsByThisGameObject);
+                gameObject.Update(gameObjects, out List<GameObject> createdObjectsByThisGameObject);
                 createdObjects.AddRange(createdObjectsByThisGameObject);
             }
 
@@ -64,13 +57,13 @@ namespace AirForce
                                                 (gameObject.PositionX + gameObject.Size / 2 < 0 ||
                                                  gameObject.PositionX > gameFieldWidth));
 
-            foreach (GameObject gameObject in gameObjects)
+            foreach (GameObject gameObject in gameObjects.Where(gameObject => gameObject.ObjectType != ObjectType.Blast))
             {
                 if (gameObject.PositionY + gameObject.Size / 2 >= ground.PositionY + 5 &&
                     CanIntersect(gameObject, ground))
                 {
                     gameObject.Destroy();
-                    blasts.Add(new Blast(new Point(gameObject.PositionX, gameObject.PositionY + gameObject.Size / 2)));
+                    createdObjects.Add(new Blast(new Point(gameObject.PositionX, gameObject.PositionY + gameObject.Size / 2)));
                     continue;
                 }
 
@@ -80,13 +73,13 @@ namespace AirForce
                         gameObject.IntersectsWith(nextGameObject) &&
                         nextGameObject.Health > 0)
                     {
-                        int gameObjectHealth = gameObject.Health;
+                        int amountOfDamage = Math.Min(gameObject.Health, nextGameObject.Health);
 
-                        gameObject.TakeDamage(nextGameObject.Health);
-                        nextGameObject.TakeDamage(gameObjectHealth);
+                        gameObject.TakeDamage(amountOfDamage);
+                        nextGameObject.TakeDamage(amountOfDamage);
 
                         if (gameObject.Health <= 0 || nextGameObject.Health <= 0)
-                            blasts.Add(new Blast(gameObject.GetMiddleOfVector(nextGameObject)));
+                            createdObjects.Add(new Blast(gameObject.GetMiddleOfVector(nextGameObject)));
 
                         switch (gameObject.ObjectType)
                         {
@@ -158,14 +151,13 @@ namespace AirForce
         {
             DrawBackground(graphics);
             DrawInterface(graphics);
-            DrawObjectsOnGameField(graphics);
-            DrawBlast(graphics);
+            DrawGameObjects(graphics);
         }
 
         private void DrawBackground(Graphics graphics)
         {
             graphics.FillRectangle(Brushes.LightCyan, 0, 0, gameFieldWidth, gameFieldHeight);
-            graphics.DrawImage(ground.Bitmap, ground.PositionX, ground.PositionY, ground.Width, ground.Height);
+            ground.Draw(graphics);
         }
 
         private void DrawInterface(Graphics graphics)
@@ -174,19 +166,10 @@ namespace AirForce
             graphics.DrawString("Player's health: " + PlayerShip.Health, font, Brushes.Black, gameFieldWidth - 165, 30);
         }
 
-        private void DrawBlast(Graphics graphics)
+        private void DrawGameObjects(Graphics graphics)
         {
-            foreach (Blast blast in blasts)
-                blast.Draw(graphics);
-        }
-
-        private void DrawObjectsOnGameField(Graphics graphics)
-        {
-            foreach (GameObject objectOnGameField in gameObjects)
-                graphics.DrawImage(objectOnGameField.Bitmap,
-                    objectOnGameField.PositionX - objectOnGameField.Size / 2,
-                    objectOnGameField.PositionY - objectOnGameField.Size / 2,
-                    objectOnGameField.Size, objectOnGameField.Size);
+            foreach (GameObject gameObject in gameObjects)
+               gameObject.Draw(graphics);
         }
 
         private readonly Dictionary<ObjectType, ObjectType> intersectTable = new Dictionary<ObjectType, ObjectType>
@@ -225,7 +208,6 @@ namespace AirForce
                                   ObjectType.Ground,
 
             [ObjectType.Bird] = ObjectType.PlayerShip
-
         };
 
         private bool CanIntersect(GameObject firstGameObject, GameObject secondGameObject)

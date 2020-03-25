@@ -46,7 +46,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Blast.cs" />
+    <Compile Include="GameObjects\Blast.cs" />
     <Compile Include="GameObjects\Bird.cs" />
     <Compile Include="GameObjects\BomberShip.cs" />
     <Compile Include="GameObjects\BomberShipBullet.cs" />
@@ -98,7 +98,7 @@
     <None Include="Resources\PlayerShip.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\chaser_ship.png" />
+    <None Include="Resources\ChaserShip.png" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Meteor.png" />
@@ -107,7 +107,7 @@
     <None Include="Resources\Bird.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\bomber_ship.png" />
+    <None Include="Resources\BomberShip.png" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Ground.jpg" />
@@ -119,7 +119,7 @@
     <None Include="Resources\BomberShipBullet.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\explosion.png" />
+    <None Include="Resources\Blast.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -8,8 +8,8 @@ namespace AirForce
     {
         public ChaserShip(int positionX, int positionY)
         {
-            ObjectType = ObjectType.ChaserShip;
             Bitmap = Properties.Resources.ChaserShip;
+            ObjectType = ObjectType.ChaserShip;
             PositionX = positionX;
             PositionY = positionY;
             Health = 1;

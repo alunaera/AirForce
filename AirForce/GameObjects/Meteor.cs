@@ -6,8 +6,8 @@ namespace AirForce
     {
         public Meteor(int positionX, int positionY)
         {
-            ObjectType = ObjectType.Meteor;
             Bitmap = Properties.Resources.Meteor;
+            ObjectType = ObjectType.Meteor;
             PositionX = positionX;
             PositionY = positionY;
             Size = 160;

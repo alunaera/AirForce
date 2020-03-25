@@ -8,8 +8,8 @@ namespace AirForce
     {
         public BomberShip(int positionX, int positionY)
         {
-            ObjectType = ObjectType.BomberShip;
             Bitmap = Properties.Resources.BomberShip;
+            ObjectType = ObjectType.BomberShip;
             PositionX = positionX;
             PositionY = positionY;
             DelayOfShot = 0;

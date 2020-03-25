@@ -4,10 +4,10 @@
     {
         protected int DelayOfShot;
 
-        protected void DecreaseDelayOfShot(int valueOfIncrease)
+        protected void DecreaseDelayOfShot(int valueOfDecrease)
         {
             if (DelayOfShot > 0)
-                DelayOfShot -= valueOfIncrease;
+                DelayOfShot -= valueOfDecrease;
         }
 
         protected void ReloadWeapon()

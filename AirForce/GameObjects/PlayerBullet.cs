@@ -6,8 +6,8 @@ namespace AirForce
     {
         public PlayerBullet(int positionX, int positionY)
         {
-            ObjectType = ObjectType.PlayerBullet;
             Bitmap = Properties.Resources.PlayerBullet;
+            ObjectType = ObjectType.PlayerBullet;
             PositionX = positionX;
             PositionY = positionY;
             Health = 1;

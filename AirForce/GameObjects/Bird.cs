@@ -6,8 +6,8 @@ namespace AirForce
     {
         public Bird(int positionX, int positionY)
         {
-            ObjectType = ObjectType.Bird;
             Bitmap = Properties.Resources.Bird;
+            ObjectType = ObjectType.Bird;
             PositionX = positionX;
             PositionY = positionY;
             Health = 1;

@@ -12,8 +12,8 @@ namespace AirForce
         public PlayerShip(int maxPositionX)
         {
             this.maxPositionX = maxPositionX;
-            ObjectType = ObjectType.PlayerShip;
             Bitmap = Properties.Resources.PlayerShip;
+            ObjectType = ObjectType.PlayerShip;
             PositionX = 100;
             PositionY = 375;
             Health = 5;

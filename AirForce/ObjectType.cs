@@ -12,6 +12,7 @@ namespace AirForce
         BomberShipBullet = 16,
         Meteor = 32,
         Ground = 64,
-        Bird = 128
+        Bird = 128,
+        Blast = 256
     }
 }

@@ -1,27 +1,33 @@
 ﻿using System.Collections.Generic;
+using System.Drawing;
 
 namespace AirForce
 {
     internal class Ground : GameObject
     {
-        public int Width { get; }
-        public int Height { get; }
+        private readonly int width;
+        private readonly int height;
 
         public Ground(int positionX, int positionY)
         {
+            width = 1550;
+            height = 120;
+            Bitmap = Properties.Resources.Ground;
+            ObjectType = ObjectType.Ground;
             PositionX = positionX;
             PositionY = positionY;
-            ObjectType = ObjectType.Ground;
-            Bitmap = Properties.Resources.Ground;
             Health = 1000;
             Size = 0;
-            Width = 1550;
-            Height = 120;
         }
 
         public override void Update(List<GameObject> gameObjects, out List<GameObject> createdObjects)
         {
             createdObjects = new List<GameObject>();
+        }
+
+        public override void Draw(Graphics graphics)
+        {
+            graphics.DrawImage(Bitmap, PositionX, PositionY, width, height);
         }
     }
 }

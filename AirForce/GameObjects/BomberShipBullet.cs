@@ -6,8 +6,8 @@ namespace AirForce
     {
         public BomberShipBullet(int positionX, int positionY)
         {
-            ObjectType = ObjectType.BomberShipBullet;
             Bitmap = Properties.Resources.BomberShipBullet;
+            ObjectType = ObjectType.BomberShipBullet;
             PositionX = positionX;
             PositionY = positionY;
             Health = 1;
