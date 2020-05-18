@@ -46,6 +46,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CommandManager.cs" />
+    <Compile Include="Commands\CommandChangeScore.cs" />
+    <Compile Include="Commands\CommandCreate.cs" />
+    <Compile Include="Commands\CommandDeath.cs" />
+    <Compile Include="Commands\CommandMove.cs" />
+    <Compile Include="Commands\CommandTakeDamage.cs" />
+    <Compile Include="Commands\ICommand.cs" />
     <Compile Include="GameObjects\Blast.cs" />
     <Compile Include="GameObjects\Bird.cs" />
     <Compile Include="GameObjects\BomberShip.cs" />
@@ -121,5 +128,6 @@
   <ItemGroup>
     <None Include="Resources\Blast.png" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

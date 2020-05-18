@@ -9,9 +9,9 @@ namespace AirForce
         protected Bitmap Bitmap;
 
         public ObjectType ObjectType { get; protected set; }
-        public int PositionX { get; protected set; }
-        public int PositionY { get; protected set; }
-        public int Health { get; protected set; }
+        public int PositionX { get; set; }
+        public int PositionY { get; set; }
+        public int Health { get; set; }
         public int Size { get; protected set; }
 
         public abstract void Update(List<GameObject> gameObjects, out List<GameObject> createdObjects);
@@ -28,7 +28,7 @@ namespace AirForce
 
         public bool IntersectsWith(GameObject gameObject)
         {
-            return GetDistanceToObject(gameObject.PositionX, gameObject.PositionY) <= (Size + gameObject.Size) / 2;
+            return GetSqrDistanceToObject(gameObject.PositionX, gameObject.PositionY) <= (Size + gameObject.Size) * (Size + gameObject.Size) / 4;
         }
 
         public Point GetMiddleOfVector(GameObject gameObject)
@@ -39,12 +39,12 @@ namespace AirForce
             return new Point(positionX, positionY);
         }
 
-        protected int GetDistanceToObject(int objectX, int objectY)
+        protected double GetSqrDistanceToObject(int objectX, int objectY)
         {
             double componentX = Math.Pow(PositionX - objectX, 2);
             double componentY = Math.Pow(PositionY - objectY, 2);
 
-            return (int) Math.Sqrt(componentX + componentY);
+            return componentX + componentY;
         }
 
         public virtual void Draw(Graphics graphics)

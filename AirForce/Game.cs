@@ -9,13 +9,13 @@ namespace AirForce
     {
         public static readonly Random Random = new Random();
         private readonly Font font = new Font("Arial", 15);
+        public List<GameObject> GameObjects;
+        public int Score;
 
         private int gameFieldWidth;
         private int gameFieldHeight;
-        private int score;
-        private PlayerShip PlayerShip => (PlayerShip)gameObjects[0];
+        private PlayerShip PlayerShip => (PlayerShip)GameObjects[0];
         private Ground ground;
-        private List<GameObject> gameObjects;
 
         public event Action Defeat = delegate { };
 
@@ -23,17 +23,17 @@ namespace AirForce
         {
             this.gameFieldWidth = gameFieldWidth;
             this.gameFieldHeight = gameFieldHeight;
-            score = 0;
+            Score = 0;
 
             ground = new Ground(0, gameFieldHeight - 120);
-            gameObjects = new List<GameObject> {new PlayerShip(gameFieldWidth)};
+            GameObjects = new List<GameObject> {new PlayerShip(gameFieldWidth)};
         }
 
         public void Update()
         {
             UpdateGameObjects();
 
-            if (gameObjects.Count(gameObject =>
+            if (GameObjects.Count(gameObject =>
                                   gameObject.ObjectType != ObjectType.PlayerBullet &&
                                   gameObject.ObjectType != ObjectType.BomberShipBullet &&
                                   gameObject.ObjectType != ObjectType.Blast) < 2)
@@ -47,28 +47,33 @@ namespace AirForce
         { 
             List<GameObject> createdObjects = new List<GameObject>();
 
-            foreach (GameObject gameObject in gameObjects)
+            foreach (GameObject gameObject in GameObjects)
             {
-                gameObject.Update(gameObjects, out List<GameObject> createdObjectsByThisGameObject);
+                gameObject.Update(GameObjects, out List<GameObject> createdObjectsByThisGameObject);
                 createdObjects.AddRange(createdObjectsByThisGameObject);
             }
 
-            gameObjects.RemoveAll(gameObject => gameObject.ObjectType != ObjectType.PlayerShip &&
+            GameObjects.RemoveAll(gameObject => gameObject.ObjectType != ObjectType.PlayerShip &&
                                                 (gameObject.PositionX + gameObject.Size / 2 < 0 ||
                                                  gameObject.PositionX > gameFieldWidth));
 
-            foreach (GameObject gameObject in gameObjects)
+            for (int i = 0; i < GameObjects.Count; i++)
             {
+                GameObject gameObject = GameObjects[i];
+
                 if (gameObject.PositionY + gameObject.Size / 2 >= ground.PositionY + 5 &&
                     CanIntersect(gameObject, ground))
                 {
                     gameObject.Destroy();
-                    createdObjects.Add(new Blast(new Point(gameObject.PositionX, gameObject.PositionY + gameObject.Size / 2)));
+                    createdObjects.Add(new Blast(new Point(gameObject.PositionX,
+                        gameObject.PositionY + gameObject.Size / 2)));
                     continue;
                 }
 
-                foreach (GameObject nextGameObject in gameObjects)
+                for (int j = i; j < GameObjects.Count; j++)
                 {
+                    GameObject nextGameObject = GameObjects[j];
+
                     if (CanIntersect(gameObject, nextGameObject) &&
                         gameObject.IntersectsWith(nextGameObject) &&
                         nextGameObject.Health > 0)
@@ -88,21 +93,21 @@ namespace AirForce
                                 if (nextGameObject.Health <= 0 &&
                                     (nextGameObject.ObjectType == ObjectType.BomberShip ||
                                      nextGameObject.ObjectType == ObjectType.ChaserShip))
-                                    score++;
+                                    Score++;
                                 break;
                             case ObjectType.ChaserShip:
                             case ObjectType.BomberShip:
                                 if (gameObject.Health <= 0 &&
                                     nextGameObject.ObjectType == ObjectType.PlayerBullet)
-                                    score++;
+                                    Score++;
                                 break;
                         }
                     }
                 }
             }
 
-            gameObjects.RemoveAll(gameObject => gameObject.Health <= 0 && gameObject.ObjectType != ObjectType.PlayerShip);
-            gameObjects.AddRange(createdObjects);
+            GameObjects.RemoveAll(gameObject => gameObject.Health <= 0 && gameObject.ObjectType != ObjectType.PlayerShip);
+            GameObjects.AddRange(createdObjects);
         }
 
         public void StartMovingPlayerShip(MoveMode moveMode)
@@ -133,16 +138,16 @@ namespace AirForce
                 switch (Random.Next(1, 5))
                 {
                     case 1:
-                        gameObjects.Add(new ChaserShip(gameFieldWidth, Random.Next(100, gameFieldHeight - 350)));
+                        GameObjects.Add(new ChaserShip(gameFieldWidth, Random.Next(100, gameFieldHeight - 350)));
                         break;
                     case 2:
-                        gameObjects.Add(new BomberShip(gameFieldWidth, Random.Next(100, gameFieldHeight - 350)));
+                        GameObjects.Add(new BomberShip(gameFieldWidth, Random.Next(100, gameFieldHeight - 350)));
                         break;
                     case 3:
-                        gameObjects.Add(new Meteor(Random.Next(gameFieldWidth - 100, gameFieldWidth), 0));
+                        GameObjects.Add(new Meteor(Random.Next(gameFieldWidth - 100, gameFieldWidth), 0));
                         break;
                     case 4:
-                        gameObjects.Add(new Bird(gameFieldWidth, Random.Next(gameFieldHeight - 300, gameFieldHeight - 50)));
+                        GameObjects.Add(new Bird(gameFieldWidth, Random.Next(gameFieldHeight - 300, gameFieldHeight - 50)));
                         break;
                 }
         }
@@ -162,13 +167,13 @@ namespace AirForce
 
         private void DrawInterface(Graphics graphics)
         {
-            graphics.DrawString("Score: " + score, font, Brushes.Black, gameFieldWidth - 165, 10);
+            graphics.DrawString("Score: " + Score, font, Brushes.Black, gameFieldWidth - 165, 10);
             graphics.DrawString("Player's health: " + PlayerShip.Health, font, Brushes.Black, gameFieldWidth - 165, 30);
         }
 
         private void DrawGameObjects(Graphics graphics)
         {
-            foreach (GameObject gameObject in gameObjects)
+            foreach (GameObject gameObject in GameObjects)
                gameObject.Draw(graphics);
         }
 
