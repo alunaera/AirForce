@@ -25,7 +25,8 @@ namespace AirForce
 
         public override void Draw(Graphics graphics)
         {
-            graphics.DrawImage(Bitmaps[4 - Health], PositionX - 5, PositionY - 5, Size, Size);
+            if (Health > 0)
+                graphics.DrawImage(Bitmaps[4 - Health], PositionX - 5, PositionY - 5, Size, Size);
         }
 
         private static Bitmap Crop(int sectorNumber)

@@ -11,9 +11,14 @@ namespace AirForce
     {
         private readonly List<List<ICommand>> commandRosters = new List<List<ICommand>>();
 
+        public void Clear()
+        {
+            commandRosters.Clear();
+        }
+
         public void ExecuteCommand(ICommand command)
         {
-            if(commandRosters.Count < 0)
+            if(commandRosters.Count <= 0)
                 return;
 
             command.Execute();

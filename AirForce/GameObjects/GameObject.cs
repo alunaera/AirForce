@@ -16,16 +16,6 @@ namespace AirForce
 
         public abstract void Update(List<GameObject> gameObjects, out List<GameObject> createdObjects);
 
-        public void Destroy()
-        {
-            Health = 0;
-        }
-
-        public void TakeDamage(int amountOfDamage)
-        {
-            Health -= amountOfDamage;
-        }
-
         public bool IntersectsWith(GameObject gameObject)
         {
             return GetSqrDistanceToObject(gameObject.PositionX, gameObject.PositionY) <= (Size + gameObject.Size) * (Size + gameObject.Size) / 4;

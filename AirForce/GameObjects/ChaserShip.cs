@@ -22,8 +22,8 @@ namespace AirForce
 
             GameObject playerShipBullet =
                 gameObjects.Where(gameObject => gameObject.ObjectType == ObjectType.PlayerBullet)
-                           .OrderBy(gameObject => GetSqrDistanceToObject(gameObject.PositionX, gameObject.PositionY))
-                           .FirstOrDefault();
+                    .OrderBy(gameObject => GetSqrDistanceToObject(gameObject.PositionX, gameObject.PositionY))
+                    .FirstOrDefault();
 
             if (playerShipBullet != null && Math.Abs(PositionY - playerShipBullet.PositionY) <= Size)
                 PositionY += 3 * Math.Sign(PositionY - playerShipBullet.PositionY);
