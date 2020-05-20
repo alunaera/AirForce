@@ -4,34 +4,32 @@ using AirForce.Commands;
 
 namespace AirForce
 {
-    internal static class CommandManager
+    internal class CommandManager
     {
-        private static readonly List<List<ICommand>> CommandRosters = new List<List<ICommand>>(); 
-        public static bool IsReverse = false;
+        private readonly List<List<ICommand>> CommandRosters = new List<List<ICommand>>();
 
-        public static void Clear()
+        public void Clear()
         {
             CommandRosters.Clear();
         }
 
-        public static void ExecuteCommand(ICommand command)
+        public void ExecuteCommand(ICommand command)
         {
-            if (CommandRosters.Count <= 0 || IsReverse)
+            if (CommandRosters.Count <= 0)
                 return;
 
             command.Execute();
             CommandRosters.Last().Add(command);
         }
 
-        public static void CreateNewRoster()
+        public void CreateNewRoster()
         {
-            if (!IsReverse)
-                CommandRosters.Add(new List<ICommand>());
+            CommandRosters.Add(new List<ICommand>());
         }
 
-        public static void UndoLastRoster()
+        public void UndoLastRoster()
         {
-            if (CommandRosters.Count < 1 || !IsReverse)
+            if (CommandRosters.Count < 1)
                 return;
 
             foreach (ICommand command in CommandRosters.Last())

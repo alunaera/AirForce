@@ -24,10 +24,10 @@ namespace AirForce
                     .FirstOrDefault();
 
             if (playerShipBullet != null && Math.Abs(PositionY - playerShipBullet.PositionY) <= Size)
-                CommandManager.ExecuteCommand(new CommandMove(this, 0,
+                game.CommandManager.ExecuteCommand(new CommandMove(this, 0,
                     3 * Math.Sign(PositionY - playerShipBullet.PositionY)));
 
-            CommandManager.ExecuteCommand(new CommandMove(this, -8, 0));
+            game.CommandManager.ExecuteCommand(new CommandMove(this, -8, 0));
         }
     }
 }

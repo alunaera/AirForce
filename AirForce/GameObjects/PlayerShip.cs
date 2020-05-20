@@ -36,7 +36,7 @@ namespace AirForce
             if (moveMode.HasFlag(MoveMode.Down))
                 offsetY = 8;
 
-            CommandManager.ExecuteCommand(new CommandMove(this, offsetX, offsetY));
+            game.CommandManager.ExecuteCommand(new CommandMove(this, offsetX, offsetY));
 
             PositionX = PositionX + Size / 2 > maxPositionX
                 ? maxPositionX - Size / 2
@@ -54,7 +54,7 @@ namespace AirForce
 
             if (isPlayerShooting && DelayOfShot <= 0)
             {
-                CommandManager.ExecuteCommand(new CommandCreate(game, new PlayerBullet(PositionX + Size / 2, PositionY)));
+                game.CommandManager.ExecuteCommand(new CommandCreate(game, new PlayerBullet(PositionX + Size / 2, PositionY)));
                 ReloadWeapon();
             }
         }

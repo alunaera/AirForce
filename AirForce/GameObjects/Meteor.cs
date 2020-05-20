@@ -16,7 +16,7 @@ namespace AirForce
 
         public override void Update(Game game)
         {
-            CommandManager.ExecuteCommand(new CommandMove(this, -10, 4));
+            game.CommandManager.ExecuteCommand(new CommandMove(this, -10, 4));
         }
     }
 }

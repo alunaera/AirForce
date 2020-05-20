@@ -31,7 +31,6 @@ namespace AirForce.States
             {
                 case Keys.ShiftKey:
                     Game.CurrentState = Game.NormalState;
-                    CommandManager.IsReverse = false;
                     Game.ClearPlayerShipsMoveMode();
                     Game.StopPlayerShipShooting();
                     reverseSpeed = 1;
@@ -48,7 +47,7 @@ namespace AirForce.States
         public override void UpdateGame()
         {
             for (int i = 0; i < reverseSpeed; i++)
-                CommandManager.UndoLastRoster();
+                Game.CommandManager.UndoLastRoster();
         }
     }
 }

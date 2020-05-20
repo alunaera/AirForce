@@ -15,7 +15,6 @@ namespace AirForce.States
             {
                 case Keys.ShiftKey:
                     Game.CurrentState = Game.ReverseState;
-                    CommandManager.IsReverse = true;
                     break;
                 case Keys.R:
                     Game.StartGame(Game.GameFieldWidth, Game.GameFieldHeight);

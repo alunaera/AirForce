@@ -12,6 +12,7 @@ namespace AirForce
     {
         public static readonly Random Random = new Random();
         public List<GameObject> GameObjects;
+        public CommandManager CommandManager;
         public State CurrentState;
         public NormalState NormalState;
         public ReverseState ReverseState;
@@ -32,9 +33,9 @@ namespace AirForce
             GameFieldHeight = gameFieldHeight;
             Score = 0;
 
-            CommandManager.Clear();
             ground = new Ground(0, gameFieldHeight - 120);
-            GameObjects = new List<GameObject> {new PlayerShip(gameFieldWidth)}; 
+            GameObjects = new List<GameObject> {new PlayerShip(gameFieldWidth)};
+            CommandManager = new CommandManager();
             NormalState = new NormalState(this);
             ReverseState = new ReverseState(this);
             defeatState = new DefeatState(this);
@@ -62,11 +63,9 @@ namespace AirForce
         }
 
         private void UpdateGameObjects()
-        { 
+        {
             for (int i = 0; i < GameObjects.Count; i++)
-            {
                 GameObjects[i].Update(this);
-            }
 
             GameObjects.RemoveAll(gameObject => gameObject.ObjectType != ObjectType.PlayerShip &&
                                                 (gameObject.PositionX + gameObject.Size / 2 < 0 ||
@@ -128,10 +127,8 @@ namespace AirForce
             }
 
             for (int i = 0; i < GameObjects.Count; i++)
-            {
                 if (GameObjects[i].Health <= 0 && GameObjects[i].ObjectType != ObjectType.PlayerShip)
                     CommandManager.ExecuteCommand(new CommandDeath(this, GameObjects[i]));
-            }
         }
 
         public void StartMovingPlayerShip(MoveMode moveMode)
@@ -214,8 +211,8 @@ namespace AirForce
             graphics.DrawString("Player's health: " + PlayerShip.Health, font, Brushes.Black, GameFieldWidth - 165, 30);
 
             if (CurrentState is DefeatState)
-                graphics.DrawString("Press Shift to reverse time  \nPress R to start new game", font, Brushes.Black, GameFieldWidth / 2 - 80,
-                    GameFieldHeight / 2);
+                graphics.DrawString("Press Shift to reverse time  \nPress R to start new game",
+                    font, Brushes.Black, GameFieldWidth / 2 - 80, GameFieldHeight / 2);
         }
 
         private void DrawGameObjects(Graphics graphics)

@@ -21,15 +21,17 @@ namespace AirForce
         {
             DecreaseDelayOfShot(3);
 
-            GameObject playerShip = game.GameObjects.FirstOrDefault(gameObject => gameObject.ObjectType == ObjectType.PlayerShip);
+            GameObject playerShip =
+                game.GameObjects.FirstOrDefault(gameObject => gameObject.ObjectType == ObjectType.PlayerShip);
 
             if (playerShip != null && Math.Abs(PositionY - playerShip.PositionY) <= playerShip.Size && DelayOfShot <= 0)
             {
-                CommandManager.ExecuteCommand(new CommandCreate(game,new BomberShipBullet(PositionX - Size, PositionY)));
+                game.CommandManager.ExecuteCommand(new CommandCreate(game,
+                    new BomberShipBullet(PositionX - Size, PositionY)));
                 ReloadWeapon();
             }
 
-            CommandManager.ExecuteCommand(new CommandMove(this, -6, 0));
+            game.CommandManager.ExecuteCommand(new CommandMove(this, -6, 0));
         }
     }
 }

@@ -30,7 +30,6 @@ namespace AirForce.States
                     break;
                 case Keys.ShiftKey:
                     Game.CurrentState = Game.ReverseState;
-                    CommandManager.IsReverse = true;
                     break;
             }
         }
