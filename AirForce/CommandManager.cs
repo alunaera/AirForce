@@ -1,33 +1,43 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using AirForce.Commands;
 
 namespace AirForce
 {
-    internal class CommandManager
+    internal static class CommandManager
     {
-        private readonly List<List<ICommand>> commandRosters = new List<List<ICommand>>();
+        private static readonly List<List<ICommand>> CommandRosters = new List<List<ICommand>>(); 
+        public static bool IsReverse = false;
 
-        public void Clear()
+        public static void Clear()
         {
-            commandRosters.Clear();
+            CommandRosters.Clear();
         }
 
-        public void ExecuteCommand(ICommand command)
+        public static void ExecuteCommand(ICommand command)
         {
-            if(commandRosters.Count <= 0)
+            if (CommandRosters.Count <= 0 || IsReverse)
                 return;
 
             command.Execute();
-            commandRosters.Last().Add(command);
+            CommandRosters.Last().Add(command);
         }
 
-        public void CreateNewRoster()
+        public static void CreateNewRoster()
         {
-            commandRosters.Add(new List<ICommand>());
+            if (!IsReverse)
+                CommandRosters.Add(new List<ICommand>());
+        }
+
+        public static void UndoLastRoster()
+        {
+            if (CommandRosters.Count < 1 || !IsReverse)
+                return;
+
+            foreach (ICommand command in CommandRosters.Last())
+                command.Undo();
+
+            CommandRosters.Remove(CommandRosters.Last());
         }
     }
 }

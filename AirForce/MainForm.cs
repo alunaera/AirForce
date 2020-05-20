@@ -56,6 +56,9 @@ namespace AirForce
                 case Keys.Space:
                     game.StartPlayerShipShooting();
                     break;
+                case Keys.Z:
+                    CommandManager.IsReverse = true;
+                    break;
             }
         }
 
@@ -78,13 +81,17 @@ namespace AirForce
                 case Keys.Space:
                     game.StopPlayerShipShooting();
                     break;
+                case Keys.Z:
+                    CommandManager.IsReverse = false;
+                    break;
             }
         }
 
         private void ClickHelp(object sender, System.EventArgs e)
         {
             MessageBox.Show("Move player's ship - WASD" +
-                            "\nStart shooting - Space");
+                            "\nStart shooting - Space" +
+                            "\nReverse - Z ");
         }
 
         private void ClickPause(object sender, System.EventArgs e)

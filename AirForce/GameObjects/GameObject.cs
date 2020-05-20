@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing;
 
 namespace AirForce
@@ -14,7 +13,7 @@ namespace AirForce
         public int Health { get; set; }
         public int Size { get; protected set; }
 
-        public abstract void Update(List<GameObject> gameObjects, out List<GameObject> createdObjects);
+        public abstract void Update(Game game);
 
         public bool IntersectsWith(GameObject gameObject)
         {

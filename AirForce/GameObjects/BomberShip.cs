@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
+using AirForce.Commands;
 
 namespace AirForce
 {
@@ -17,21 +17,19 @@ namespace AirForce
             Size = 80;
         }
 
-        public override void Update(List<GameObject> gameObjects, out List<GameObject> createdObjects)
+        public override void Update(Game game)
         {
             DecreaseDelayOfShot(3);
 
-            createdObjects = new List<GameObject>();
-
-            GameObject playerShip = gameObjects.FirstOrDefault(gameObject => gameObject.ObjectType == ObjectType.PlayerShip);
+            GameObject playerShip = game.GameObjects.FirstOrDefault(gameObject => gameObject.ObjectType == ObjectType.PlayerShip);
 
             if (playerShip != null && Math.Abs(PositionY - playerShip.PositionY) <= playerShip.Size && DelayOfShot <= 0)
             {
-                createdObjects.Add(new BomberShipBullet(PositionX - Size, PositionY));
+                CommandManager.ExecuteCommand(new CommandCreate(game,new BomberShipBullet(PositionX - Size, PositionY)));
                 ReloadWeapon();
             }
 
-            PositionX -= 6;
+            CommandManager.ExecuteCommand(new CommandMove(this, -6, 0));
         }
     }
 }

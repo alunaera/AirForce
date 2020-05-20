@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+﻿using AirForce.Commands;
 
 namespace AirForce
 {
@@ -14,10 +14,9 @@ namespace AirForce
             Size = 14;
         }
 
-        public override void Update(List<GameObject> gameObjects, out List<GameObject> createdObjects)
+        public override void Update(Game game)
         {
-            createdObjects = new List<GameObject>();
-            PositionX += 8;
+            CommandManager.ExecuteCommand(new CommandMove(this, 8, 0));
         }
     }
 }

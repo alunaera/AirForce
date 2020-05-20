@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Threading;
 using AirForce.Commands;
 
 namespace AirForce
@@ -13,7 +14,6 @@ namespace AirForce
         public int Score;
 
         private readonly Font font = new Font("Arial", 15);
-        private CommandManager commandManager;
 
         private int gameFieldWidth;
         private int gameFieldHeight;
@@ -28,34 +28,38 @@ namespace AirForce
             this.gameFieldHeight = gameFieldHeight;
             Score = 0;
 
-            commandManager = new CommandManager();
+            CommandManager.Clear();
             ground = new Ground(0, gameFieldHeight - 120);
             GameObjects = new List<GameObject> {new PlayerShip(gameFieldWidth)};
         }
 
         public void Update()
         {
-            commandManager.CreateNewRoster();
-            UpdateGameObjects();
+            if (!CommandManager.IsReverse)
+            {
+                CommandManager.CreateNewRoster();
+                UpdateGameObjects();
 
-            if (GameObjects.Count(gameObject =>
-                                  gameObject.ObjectType != ObjectType.PlayerBullet &&
-                                  gameObject.ObjectType != ObjectType.BomberShipBullet &&
-                                  gameObject.ObjectType != ObjectType.Blast) < 2)
-                GenerateEnemies();
+                if (GameObjects.Count(gameObject =>
+                    gameObject.ObjectType != ObjectType.PlayerBullet &&
+                    gameObject.ObjectType != ObjectType.BomberShipBullet &&
+                    gameObject.ObjectType != ObjectType.Blast) < 2)
+                    GenerateEnemies();
 
-            if (PlayerShip.Health < 1)
-                Defeat();
+                if (PlayerShip.Health < 1)
+                    Defeat();
+            }
+            else
+            {
+                CommandManager.UndoLastRoster();
+            }
         }
 
         private void UpdateGameObjects()
         { 
-            List<GameObject> createdObjects = new List<GameObject>();
-
-            foreach (GameObject gameObject in GameObjects)
+            for (int i = 0; i < GameObjects.Count; i++)
             {
-                gameObject.Update(GameObjects, out List<GameObject> createdObjectsByThisGameObject);
-                createdObjects.AddRange(createdObjectsByThisGameObject);
+                GameObjects[i].Update(this);
             }
 
             GameObjects.RemoveAll(gameObject => gameObject.ObjectType != ObjectType.PlayerShip &&
@@ -72,8 +76,8 @@ namespace AirForce
                     if (gameObject.ObjectType == ObjectType.PlayerShip)
                         Defeat();
 
-                    commandManager.ExecuteCommand(new CommandDeath(this, gameObject));
-                    commandManager.ExecuteCommand(new CommandCreate(this, new Blast(new Point(gameObject.PositionX,
+                    CommandManager.ExecuteCommand(new CommandDeath(this, gameObject));
+                    CommandManager.ExecuteCommand(new CommandCreate(this, new Blast(new Point(gameObject.PositionX,
                         gameObject.PositionY + gameObject.Size / 2))));
                     continue;
                 }
@@ -88,11 +92,11 @@ namespace AirForce
                     {
                         int amountOfDamage = Math.Min(gameObject.Health, nextGameObject.Health);
 
-                        commandManager.ExecuteCommand(new CommandTakeDamage(gameObject, amountOfDamage));
-                        commandManager.ExecuteCommand(new CommandTakeDamage(nextGameObject, amountOfDamage));
+                        CommandManager.ExecuteCommand(new CommandTakeDamage(gameObject, amountOfDamage));
+                        CommandManager.ExecuteCommand(new CommandTakeDamage(nextGameObject, amountOfDamage));
 
                         if (gameObject.Health <= 0 || nextGameObject.Health <= 0)
-                            commandManager.ExecuteCommand(new CommandCreate(this,
+                            CommandManager.ExecuteCommand(new CommandCreate(this,
                                 new Blast(gameObject.GetMiddleOfVector(nextGameObject))));
 
                         switch (gameObject.ObjectType)
@@ -102,27 +106,24 @@ namespace AirForce
                                 if (nextGameObject.Health <= 0 &&
                                     (nextGameObject.ObjectType == ObjectType.BomberShip ||
                                      nextGameObject.ObjectType == ObjectType.ChaserShip))
-                                    commandManager.ExecuteCommand(new CommandChangeScore(this));
+                                    CommandManager.ExecuteCommand(new CommandChangeScore(this));
                                 break;
                             case ObjectType.ChaserShip:
                             case ObjectType.BomberShip:
                                 if (gameObject.Health <= 0 &&
                                     nextGameObject.ObjectType == ObjectType.PlayerBullet)
-                                    commandManager.ExecuteCommand(new CommandChangeScore(this));
+                                    CommandManager.ExecuteCommand(new CommandChangeScore(this));
                                 break;
                         }
                     }
                 }
             }
 
-            for (var i = 0; i < GameObjects.Count; i++)
+            for (int i = 0; i < GameObjects.Count; i++)
             {
                 if (GameObjects[i].Health <= 0 && GameObjects[i].ObjectType != ObjectType.PlayerShip)
-                    commandManager.ExecuteCommand(new CommandDeath(this, GameObjects[i]));
+                    CommandManager.ExecuteCommand(new CommandDeath(this, GameObjects[i]));
             }
-
-            foreach (GameObject createdObject in createdObjects)
-                commandManager.ExecuteCommand(new CommandCreate(this, createdObject));
         }
 
         public void StartMovingPlayerShip(MoveMode moveMode)
@@ -153,19 +154,19 @@ namespace AirForce
                 switch (Random.Next(1, 5))
                 {
                     case 1:
-                        commandManager.ExecuteCommand(new CommandCreate(this,
+                        CommandManager.ExecuteCommand(new CommandCreate(this,
                             new ChaserShip(gameFieldWidth, Random.Next(100, gameFieldHeight - 350))));
                         break;
                     case 2:
-                        commandManager.ExecuteCommand(new CommandCreate(this,
+                        CommandManager.ExecuteCommand(new CommandCreate(this,
                             new BomberShip(gameFieldWidth, Random.Next(100, gameFieldHeight - 350))));
                         break;
                     case 3:
-                        commandManager.ExecuteCommand(new CommandCreate(this,
+                        CommandManager.ExecuteCommand(new CommandCreate(this,
                             new Meteor(Random.Next(gameFieldWidth - 100, gameFieldWidth), 0)));
                         break;
                     case 4:
-                        commandManager.ExecuteCommand(new CommandCreate(this,
+                        CommandManager.ExecuteCommand(new CommandCreate(this,
                             new Bird(gameFieldWidth, Random.Next(gameFieldHeight - 300, gameFieldHeight - 50))));
                         break;
                 }

@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+﻿using AirForce.Commands;
 
 namespace AirForce
 {
@@ -22,18 +22,21 @@ namespace AirForce
             isPlayerShooting = false;
         }
 
-        public override void Update(List<GameObject> gameObjects, out List<GameObject> createdObjects)
+        public override void Update(Game game)
         {
-            createdObjects = new List<GameObject>();
+            int offsetX = 0;
+            int offsetY = 0;
 
             if (moveMode.HasFlag(MoveMode.Left))
-                PositionX -= 8;
+                offsetX = -8;
             if (moveMode.HasFlag(MoveMode.Right))
-                PositionX += 8;
+                offsetX = 8;
             if (moveMode.HasFlag(MoveMode.Up))
-                PositionY -= 8;
+                offsetY = -8;
             if (moveMode.HasFlag(MoveMode.Down))
-                PositionY += 8;
+                offsetY = 8;
+
+            CommandManager.ExecuteCommand(new CommandMove(this, offsetX, offsetY));
 
             PositionX = PositionX + Size / 2 > maxPositionX
                 ? maxPositionX - Size / 2
@@ -51,7 +54,7 @@ namespace AirForce
 
             if (isPlayerShooting && DelayOfShot <= 0)
             {
-                createdObjects.Add(new PlayerBullet(PositionX + Size / 2, PositionY));
+                CommandManager.ExecuteCommand(new CommandCreate(game, new PlayerBullet(PositionX + Size / 2, PositionY)));
                 ReloadWeapon();
             }
         }

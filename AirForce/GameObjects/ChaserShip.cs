@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
+using AirForce.Commands;
 
 namespace AirForce
 {
@@ -16,19 +16,18 @@ namespace AirForce
             Size = 80;
         }
 
-        public override void Update(List<GameObject> gameObjects, out List<GameObject> createdObjects)
+        public override void Update(Game game)
         {
-            createdObjects = new List<GameObject>();
-
             GameObject playerShipBullet =
-                gameObjects.Where(gameObject => gameObject.ObjectType == ObjectType.PlayerBullet)
+                game.GameObjects.Where(gameObject => gameObject.ObjectType == ObjectType.PlayerBullet)
                     .OrderBy(gameObject => GetSqrDistanceToObject(gameObject.PositionX, gameObject.PositionY))
                     .FirstOrDefault();
 
             if (playerShipBullet != null && Math.Abs(PositionY - playerShipBullet.PositionY) <= Size)
-                PositionY += 3 * Math.Sign(PositionY - playerShipBullet.PositionY);
+                CommandManager.ExecuteCommand(new CommandMove(this, 0,
+                    3 * Math.Sign(PositionY - playerShipBullet.PositionY)));
 
-            PositionX -= 8;
+            CommandManager.ExecuteCommand(new CommandMove(this, -8, 0));
         }
     }
 }

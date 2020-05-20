@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Drawing;
+﻿using System.Drawing;
 
 namespace AirForce
 {
@@ -16,10 +15,8 @@ namespace AirForce
             Health = 4;
         }
 
-        public override void Update(List<GameObject> gameObjects, out List<GameObject> createdObjects)
+        public override void Update(Game game)
         {
-            createdObjects = new List<GameObject>();
-
             Health--;
         }
 
