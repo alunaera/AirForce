@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using System.Threading;
+using System.Windows.Forms;
 using AirForce.Commands;
+using AirForce.States;
 
 namespace AirForce
 {
@@ -11,33 +12,43 @@ namespace AirForce
     {
         public static readonly Random Random = new Random();
         public List<GameObject> GameObjects;
+        public State CurrentState;
+        public NormalState NormalState;
+        public ReverseState ReverseState;
         public int Score;
+        public int GameFieldWidth { get; private set; }
+        public int GameFieldHeight { get; private set; }
 
         private readonly Font font = new Font("Arial", 15);
 
-        private int gameFieldWidth;
-        private int gameFieldHeight;
+        private DefeatState defeatState;
         private PlayerShip PlayerShip => (PlayerShip)GameObjects[0];
         private Ground ground;
 
-        public event Action Defeat = delegate { };
 
         public void StartGame(int gameFieldWidth, int gameFieldHeight)
         {
-            this.gameFieldWidth = gameFieldWidth;
-            this.gameFieldHeight = gameFieldHeight;
+            GameFieldWidth = gameFieldWidth;
+            GameFieldHeight = gameFieldHeight;
             Score = 0;
 
             CommandManager.Clear();
             ground = new Ground(0, gameFieldHeight - 120);
-            GameObjects = new List<GameObject> {new PlayerShip(gameFieldWidth)};
+            GameObjects = new List<GameObject> {new PlayerShip(gameFieldWidth)}; 
+            NormalState = new NormalState(this);
+            ReverseState = new ReverseState(this);
+            defeatState = new DefeatState(this);
+            CurrentState = NormalState;
+        }
+
+        public void TickTimer()
+        {
+            CurrentState.UpdateGame();
         }
 
         public void Update()
         {
-            if (!CommandManager.IsReverse)
-            {
-                CommandManager.CreateNewRoster();
+            CommandManager.CreateNewRoster();
                 UpdateGameObjects();
 
                 if (GameObjects.Count(gameObject =>
@@ -47,12 +58,7 @@ namespace AirForce
                     GenerateEnemies();
 
                 if (PlayerShip.Health < 1)
-                    Defeat();
-            }
-            else
-            {
-                CommandManager.UndoLastRoster();
-            }
+                    CurrentState = defeatState;
         }
 
         private void UpdateGameObjects()
@@ -64,7 +70,7 @@ namespace AirForce
 
             GameObjects.RemoveAll(gameObject => gameObject.ObjectType != ObjectType.PlayerShip &&
                                                 (gameObject.PositionX + gameObject.Size / 2 < 0 ||
-                                                 gameObject.PositionX > gameFieldWidth));
+                                                 gameObject.PositionX > GameFieldWidth));
 
             for (int i = 0; i < GameObjects.Count; i++)
             {
@@ -74,12 +80,14 @@ namespace AirForce
                     CanIntersect(gameObject, ground))
                 {
                     if (gameObject.ObjectType == ObjectType.PlayerShip)
-                        Defeat();
-
-                    CommandManager.ExecuteCommand(new CommandDeath(this, gameObject));
-                    CommandManager.ExecuteCommand(new CommandCreate(this, new Blast(new Point(gameObject.PositionX,
-                        gameObject.PositionY + gameObject.Size / 2))));
-                    continue;
+                        CurrentState = defeatState;
+                    else
+                    {
+                        CommandManager.ExecuteCommand(new CommandDeath(this, gameObject));
+                        CommandManager.ExecuteCommand(new CommandCreate(this, new Blast(new Point(gameObject.PositionX,
+                            gameObject.PositionY + gameObject.Size / 2))));
+                        continue;
+                    }
                 }
 
                 for (int j = i; j < GameObjects.Count; j++)
@@ -136,6 +144,11 @@ namespace AirForce
             PlayerShip.StopMoving(moveMode);
         }
 
+        public void ClearPlayerShipsMoveMode()
+        {
+            PlayerShip.ClearMoveMode();
+        }
+
         public void StartPlayerShipShooting()
         {
             PlayerShip.StartShooting();
@@ -155,21 +168,31 @@ namespace AirForce
                 {
                     case 1:
                         CommandManager.ExecuteCommand(new CommandCreate(this,
-                            new ChaserShip(gameFieldWidth, Random.Next(100, gameFieldHeight - 350))));
+                            new ChaserShip(GameFieldWidth, Random.Next(100, GameFieldHeight - 350))));
                         break;
                     case 2:
                         CommandManager.ExecuteCommand(new CommandCreate(this,
-                            new BomberShip(gameFieldWidth, Random.Next(100, gameFieldHeight - 350))));
+                            new BomberShip(GameFieldWidth, Random.Next(100, GameFieldHeight - 350))));
                         break;
                     case 3:
                         CommandManager.ExecuteCommand(new CommandCreate(this,
-                            new Meteor(Random.Next(gameFieldWidth - 100, gameFieldWidth), 0)));
+                            new Meteor(Random.Next(GameFieldWidth - 100, GameFieldWidth), 0)));
                         break;
                     case 4:
                         CommandManager.ExecuteCommand(new CommandCreate(this,
-                            new Bird(gameFieldWidth, Random.Next(gameFieldHeight - 300, gameFieldHeight - 50))));
+                            new Bird(GameFieldWidth, Random.Next(GameFieldHeight - 300, GameFieldHeight - 50))));
                         break;
                 }
+        }
+
+        public void DownKey(Keys keyCode)
+        {
+            CurrentState.DownKey(keyCode);
+        }
+
+        public void UpKey(Keys keyCode)
+        {
+            CurrentState.UpKey(keyCode);
         }
 
         public void Draw(Graphics graphics)
@@ -181,14 +204,18 @@ namespace AirForce
 
         private void DrawBackground(Graphics graphics)
         {
-            graphics.FillRectangle(Brushes.LightCyan, 0, 0, gameFieldWidth, gameFieldHeight);
+            graphics.FillRectangle(Brushes.LightCyan, 0, 0, GameFieldWidth, GameFieldHeight);
             ground.Draw(graphics);
         }
 
         private void DrawInterface(Graphics graphics)
         {
-            graphics.DrawString("Score: " + Score, font, Brushes.Black, gameFieldWidth - 165, 10);
-            graphics.DrawString("Player's health: " + PlayerShip.Health, font, Brushes.Black, gameFieldWidth - 165, 30);
+            graphics.DrawString("Score: " + Score, font, Brushes.Black, GameFieldWidth - 165, 10);
+            graphics.DrawString("Player's health: " + PlayerShip.Health, font, Brushes.Black, GameFieldWidth - 165, 30);
+
+            if (CurrentState is DefeatState)
+                graphics.DrawString("Press Shift to reverse time  \nPress R to start new game", font, Brushes.Black, GameFieldWidth / 2 - 80,
+                    GameFieldHeight / 2);
         }
 
         private void DrawGameObjects(Graphics graphics)

@@ -1,5 +1,6 @@
 ﻿using System.Drawing.Drawing2D;
 using System.Windows.Forms;
+using AirForce.States;
 
 namespace AirForce
 {
@@ -13,15 +14,6 @@ namespace AirForce
 
             gameField.Paint += Draw;
 
-            game.Defeat += () =>
-            {
-                Timer.Enabled = false;
-                game.StopPlayerShipShooting();
-                MessageBox.Show("Game over");
-                game.StartGame(ClientRectangle.Width, ClientRectangle.Height);
-                Timer.Enabled = true;
-            };
-
             game.StartGame(ClientRectangle.Width, ClientRectangle.Height);
         }
 
@@ -33,65 +25,26 @@ namespace AirForce
 
         private void TickTimer(object sender, System.EventArgs e)
         {
-            game.Update();
+            game.TickTimer();
             gameField.Refresh();
         }
 
         private void DownKey(object sender, KeyEventArgs e)
         {
-            switch (e.KeyCode)
-            {
-                case Keys.W:
-                    game.StartMovingPlayerShip(MoveMode.Up);
-                    break;
-                case Keys.D:
-                    game.StartMovingPlayerShip(MoveMode.Right);
-                    break;
-                case Keys.S:
-                    game.StartMovingPlayerShip(MoveMode.Down);
-                    break;
-                case Keys.A:
-                    game.StartMovingPlayerShip(MoveMode.Left);
-                    break;
-                case Keys.Space:
-                    game.StartPlayerShipShooting();
-                    break;
-                case Keys.Z:
-                    CommandManager.IsReverse = true;
-                    break;
-            }
+          
+            game.DownKey(e.KeyCode);
         }
 
         private void UpKey(object sender, KeyEventArgs e)
         {
-            switch (e.KeyCode)
-            {
-                case Keys.W:
-                    game.StopMovingPlayerShip(MoveMode.Up);
-                    break;
-                case Keys.D:
-                    game.StopMovingPlayerShip(MoveMode.Right);
-                    break;
-                case Keys.S:
-                    game.StopMovingPlayerShip(MoveMode.Down);
-                    break;
-                case Keys.A:
-                    game.StopMovingPlayerShip(MoveMode.Left);
-                    break;
-                case Keys.Space:
-                    game.StopPlayerShipShooting();
-                    break;
-                case Keys.Z:
-                    CommandManager.IsReverse = false;
-                    break;
-            }
+            game.UpKey(e.KeyCode);
         }
 
         private void ClickHelp(object sender, System.EventArgs e)
         {
             MessageBox.Show("Move player's ship - WASD" +
                             "\nStart shooting - Space" +
-                            "\nReverse - Z ");
+                            "\nReverse - Shift ");
         }
 
         private void ClickPause(object sender, System.EventArgs e)

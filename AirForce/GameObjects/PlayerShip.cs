@@ -97,6 +97,11 @@ namespace AirForce
             }
         }
 
+        public void ClearMoveMode()
+        {
+            moveMode = 0;
+        }
+
         public void StartShooting()
         {
             isPlayerShooting = true;
