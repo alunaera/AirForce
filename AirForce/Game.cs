@@ -67,10 +67,6 @@ namespace AirForce
             for (int i = 0; i < GameObjects.Count; i++)
                 GameObjects[i].Update(this);
 
-            GameObjects.RemoveAll(gameObject => gameObject.ObjectType != ObjectType.PlayerShip &&
-                                                (gameObject.PositionX + gameObject.Size / 2 < 0 ||
-                                                 gameObject.PositionX > GameFieldWidth));
-
             for (int i = 0; i < GameObjects.Count; i++)
             {
                 GameObject gameObject = GameObjects[i];
@@ -127,7 +123,10 @@ namespace AirForce
             }
 
             for (int i = 0; i < GameObjects.Count; i++)
-                if (GameObjects[i].Health <= 0 && GameObjects[i].ObjectType != ObjectType.PlayerShip)
+                if ((GameObjects[i].Health <= 0 ||
+                     GameObjects[i].PositionX + GameObjects[i].Size / 2 < 0 ||
+                     GameObjects[i].PositionX > GameFieldWidth) &&
+                    GameObjects[i].ObjectType != ObjectType.PlayerShip)
                     CommandManager.ExecuteCommand(new CommandDeath(this, GameObjects[i]));
         }
 
@@ -211,7 +210,7 @@ namespace AirForce
             graphics.DrawString("Player's health: " + PlayerShip.Health, font, Brushes.Black, GameFieldWidth - 165, 30);
 
             if (CurrentState is DefeatState)
-                graphics.DrawString("Press Shift to reverse time  \nPress R to start new game",
+                graphics.DrawString("Press Shift to reverse time  \nPress R to restart",
                     font, Brushes.Black, GameFieldWidth / 2 - 80, GameFieldHeight / 2);
         }
 
