@@ -6,11 +6,11 @@
         private readonly int offsetX;
         private readonly int offsetY;
 
-        public CommandMove(GameObject gameObject, int offsetX, int offsetY)
+        public CommandMove(GameObject gameObject)
         {
             this.gameObject = gameObject;
-            this.offsetX = offsetX;
-            this.offsetY = offsetY;
+            offsetX = gameObject.OffsetX;
+            offsetY = gameObject.OffsetY;
         }
 
         public void Execute()

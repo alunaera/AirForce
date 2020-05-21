@@ -12,6 +12,8 @@ namespace AirForce
             ObjectType = ObjectType.BomberShip;
             PositionX = positionX;
             PositionY = positionY;
+            OffsetX = -6;
+            OffsetY = 0;
             DelayOfShot = 0;
             Health = 3;
             Size = 80;
@@ -31,7 +33,7 @@ namespace AirForce
                 ReloadWeapon();
             }
 
-            game.CommandManager.ExecuteCommand(new CommandMove(this, -6, 0));
+            game.CommandManager.ExecuteCommand(new CommandMove(this));
         }
     }
 }

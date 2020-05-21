@@ -24,19 +24,19 @@ namespace AirForce
 
         public override void Update(Game game)
         {
-            int offsetX = 0;
-            int offsetY = 0;
+            OffsetX = 0;
+            OffsetY = 0;
 
             if (moveMode.HasFlag(MoveMode.Left))
-                offsetX = -8;
+                OffsetX = -8;
             if (moveMode.HasFlag(MoveMode.Right))
-                offsetX = 8;
+                OffsetX = 8;
             if (moveMode.HasFlag(MoveMode.Up))
-                offsetY = -8;
+                OffsetY = -8;
             if (moveMode.HasFlag(MoveMode.Down))
-                offsetY = 8;
+                OffsetY = 8;
 
-            game.CommandManager.ExecuteCommand(new CommandMove(this, offsetX, offsetY));
+            game.CommandManager.ExecuteCommand(new CommandMove(this));
 
             PositionX = PositionX + Size / 2 > maxPositionX
                 ? maxPositionX - Size / 2

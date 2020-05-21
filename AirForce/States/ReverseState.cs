@@ -2,7 +2,7 @@
 
 namespace AirForce.States
 {
-    class ReverseState : State
+    internal class ReverseState : State
     {
         private int reverseSpeed;
 

@@ -12,6 +12,8 @@ namespace AirForce
             ObjectType = ObjectType.ChaserShip;
             PositionX = positionX;
             PositionY = positionY;
+            OffsetX = -8;
+            OffsetY = 0;
             Health = 1;
             Size = 80;
         }
@@ -24,10 +26,11 @@ namespace AirForce
                     .FirstOrDefault();
 
             if (playerShipBullet != null && Math.Abs(PositionY - playerShipBullet.PositionY) <= Size)
-                game.CommandManager.ExecuteCommand(new CommandMove(this, 0,
-                    3 * Math.Sign(PositionY - playerShipBullet.PositionY)));
+                OffsetY = 3 * Math.Sign(PositionY - playerShipBullet.PositionY);
+            else
+                OffsetY = 0;
 
-            game.CommandManager.ExecuteCommand(new CommandMove(this, -8, 0));
+            game.CommandManager.ExecuteCommand(new CommandMove(this));
         }
     }
 }

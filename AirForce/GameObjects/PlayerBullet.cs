@@ -10,13 +10,15 @@ namespace AirForce
             ObjectType = ObjectType.PlayerBullet;
             PositionX = positionX;
             PositionY = positionY;
+            OffsetX = 8;
+            OffsetY = 0;
             Health = 1;
             Size = 14;
         }
 
         public override void Update(Game game)
         {
-            game.CommandManager.ExecuteCommand(new CommandMove(this, 8, 0));
+            game.CommandManager.ExecuteCommand(new CommandMove(this));
         }
     }
 }

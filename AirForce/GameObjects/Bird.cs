@@ -10,13 +10,16 @@ namespace AirForce
             ObjectType = ObjectType.Bird;
             PositionX = positionX;
             PositionY = positionY;
+            OffsetX = -10;
+            OffsetY = 0;
             Health = 1;
             Size = 30;
         }
 
         public override void Update(Game game)
         {
-            game.CommandManager.ExecuteCommand(new CommandMove(this, -10, Game.Random.Next(-8, 8)));
+            OffsetY = Game.Random.Next(-8, 8);
+            game.CommandManager.ExecuteCommand(new CommandMove(this));
         }
     }
 }

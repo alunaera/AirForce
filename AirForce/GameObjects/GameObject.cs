@@ -10,6 +10,8 @@ namespace AirForce
         public ObjectType ObjectType { get; protected set; }
         public int PositionX { get; set; }
         public int PositionY { get; set; }
+        public int OffsetX { get; protected set; }
+        public int OffsetY { get; protected set; }
         public int Health { get; set; }
         public int Size { get; protected set; }
 

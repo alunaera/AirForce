@@ -10,13 +10,15 @@ namespace AirForce
             ObjectType = ObjectType.Meteor;
             PositionX = positionX;
             PositionY = positionY;
+            OffsetX = -10;
+            OffsetY = 4;
             Size = 160;
             Health = 10;
         }
 
         public override void Update(Game game)
         {
-            game.CommandManager.ExecuteCommand(new CommandMove(this, -10, 4));
+            game.CommandManager.ExecuteCommand(new CommandMove(this));
         }
     }
 }

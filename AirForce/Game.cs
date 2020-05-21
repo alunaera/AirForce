@@ -120,14 +120,13 @@ namespace AirForce
                         }
                     }
                 }
-            }
 
-            for (int i = 0; i < GameObjects.Count; i++)
-                if ((GameObjects[i].Health <= 0 ||
+                if (GameObjects[i].ObjectType != ObjectType.PlayerShip && 
+                    (GameObjects[i].Health <= 0 ||
                      GameObjects[i].PositionX + GameObjects[i].Size / 2 < 0 ||
-                     GameObjects[i].PositionX > GameFieldWidth) &&
-                    GameObjects[i].ObjectType != ObjectType.PlayerShip)
+                     GameObjects[i].PositionX > GameFieldWidth))
                     CommandManager.ExecuteCommand(new CommandDeath(this, GameObjects[i]));
+            }
         }
 
         public void StartMovingPlayerShip(MoveMode moveMode)
