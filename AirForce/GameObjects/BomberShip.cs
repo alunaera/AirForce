@@ -28,7 +28,7 @@ namespace AirForce
 
             if (playerShip != null && Math.Abs(PositionY - playerShip.PositionY) <= playerShip.Size && DelayOfShot <= 0)
             {
-                game.CommandManager.ExecuteCommand(new CommandCreate(game,
+                game.CommandManager.ExecuteCommand(new CommandCreate(game.GameObjects,
                     new BomberShipBullet(PositionX - Size, PositionY)));
                 ReloadWeapon();
             }

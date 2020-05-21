@@ -11,19 +11,21 @@ namespace AirForce
     internal class Game
     {
         public static readonly Random Random = new Random();
-        public List<GameObject> GameObjects;
-        public CommandManager CommandManager;
-        public State CurrentState;
-        public NormalState NormalState;
-        public ReverseState ReverseState;
-        public int Score;
+
         public int GameFieldWidth { get; private set; }
         public int GameFieldHeight { get; private set; }
+        public int Score;
+
+        public List<GameObject> GameObjects { get; private set; }
+        public CommandManager CommandManager { get; private set; }
+        public NormalState NormalState { get; private set; }
+        public ReverseState ReverseState { get; private set; }
+        public State CurrentState { private get; set; }
 
         private readonly Font font = new Font("Arial", 15);
 
         private DefeatState defeatState;
-        private PlayerShip PlayerShip => (PlayerShip)GameObjects[0];
+        private PlayerShip PlayerShip => (PlayerShip) GameObjects[0];
         private Ground ground;
 
 
@@ -50,20 +52,21 @@ namespace AirForce
         public void Update()
         {
             CommandManager.CreateNewRoster();
-                UpdateGameObjects();
+            UpdateGameObjects();
 
-                if (GameObjects.Count(gameObject =>
-                    gameObject.ObjectType != ObjectType.PlayerBullet &&
-                    gameObject.ObjectType != ObjectType.BomberShipBullet &&
-                    gameObject.ObjectType != ObjectType.Blast) < 2)
-                    GenerateEnemies();
+            if (GameObjects.Count(gameObject =>
+                gameObject.ObjectType != ObjectType.PlayerBullet &&
+                gameObject.ObjectType != ObjectType.BomberShipBullet &&
+                gameObject.ObjectType != ObjectType.Blast) < 2)
+                GenerateEnemies();
 
-                if (PlayerShip.Health < 1)
-                    CurrentState = defeatState;
+            if (PlayerShip.Health < 1)
+                CurrentState = defeatState;
         }
 
         private void UpdateGameObjects()
         {
+            // In that cycle method "Update" change collection
             for (int i = 0; i < GameObjects.Count; i++)
                 GameObjects[i].Update(this);
 
@@ -78,9 +81,9 @@ namespace AirForce
                         CurrentState = defeatState;
                     else
                     {
-                        CommandManager.ExecuteCommand(new CommandDeath(this, gameObject));
-                        CommandManager.ExecuteCommand(new CommandCreate(this, new Blast(new Point(gameObject.PositionX,
-                            gameObject.PositionY + gameObject.Size / 2))));
+                        CommandManager.ExecuteCommand(new CommandDeath(GameObjects, gameObject));
+                        CommandManager.ExecuteCommand(new CommandCreate(GameObjects, new Blast(new Point(
+                            gameObject.PositionX, gameObject.PositionY + gameObject.Size / 2))));
                         continue;
                     }
                 }
@@ -99,7 +102,7 @@ namespace AirForce
                         CommandManager.ExecuteCommand(new CommandTakeDamage(nextGameObject, amountOfDamage));
 
                         if (gameObject.Health <= 0 || nextGameObject.Health <= 0)
-                            CommandManager.ExecuteCommand(new CommandCreate(this,
+                            CommandManager.ExecuteCommand(new CommandCreate(GameObjects,
                                 new Blast(gameObject.GetMiddleOfVector(nextGameObject))));
 
                         switch (gameObject.ObjectType)
@@ -121,11 +124,11 @@ namespace AirForce
                     }
                 }
 
-                if (GameObjects[i].ObjectType != ObjectType.PlayerShip && 
+                if (GameObjects[i].ObjectType != ObjectType.PlayerShip &&
                     (GameObjects[i].Health <= 0 ||
                      GameObjects[i].PositionX + GameObjects[i].Size / 2 < 0 ||
                      GameObjects[i].PositionX > GameFieldWidth))
-                    CommandManager.ExecuteCommand(new CommandDeath(this, GameObjects[i]));
+                    CommandManager.ExecuteCommand(new CommandDeath(GameObjects, GameObjects[i]));
             }
         }
 
@@ -162,19 +165,19 @@ namespace AirForce
                 switch (Random.Next(1, 5))
                 {
                     case 1:
-                        CommandManager.ExecuteCommand(new CommandCreate(this,
+                        CommandManager.ExecuteCommand(new CommandCreate(GameObjects,
                             new ChaserShip(GameFieldWidth, Random.Next(100, GameFieldHeight - 350))));
                         break;
                     case 2:
-                        CommandManager.ExecuteCommand(new CommandCreate(this,
+                        CommandManager.ExecuteCommand(new CommandCreate(GameObjects,
                             new BomberShip(GameFieldWidth, Random.Next(100, GameFieldHeight - 350))));
                         break;
                     case 3:
-                        CommandManager.ExecuteCommand(new CommandCreate(this,
+                        CommandManager.ExecuteCommand(new CommandCreate(GameObjects,
                             new Meteor(Random.Next(GameFieldWidth - 100, GameFieldWidth), 0)));
                         break;
                     case 4:
-                        CommandManager.ExecuteCommand(new CommandCreate(this,
+                        CommandManager.ExecuteCommand(new CommandCreate(GameObjects,
                             new Bird(GameFieldWidth, Random.Next(GameFieldHeight - 300, GameFieldHeight - 50))));
                         break;
                 }
@@ -216,7 +219,7 @@ namespace AirForce
         private void DrawGameObjects(Graphics graphics)
         {
             foreach (GameObject gameObject in GameObjects)
-               gameObject.Draw(graphics);
+                gameObject.Draw(graphics);
         }
 
         private readonly Dictionary<ObjectType, ObjectType> intersectTable = new Dictionary<ObjectType, ObjectType>

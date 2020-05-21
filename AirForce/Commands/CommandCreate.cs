@@ -1,24 +1,26 @@
-﻿namespace AirForce.Commands
+﻿using System.Collections.Generic;
+
+namespace AirForce.Commands
 {
     internal class CommandCreate : ICommand
     {
-        private readonly Game game;
+        private readonly List<GameObject> gameObjects;
         private readonly GameObject gameObject;
 
-        public CommandCreate(Game game, GameObject gameObject)
+        public CommandCreate(List<GameObject> gameObjects, GameObject gameObject)
         {
-            this.game = game;
+            this.gameObjects = gameObjects;
             this.gameObject = gameObject;
         }
 
         public void Execute()
         {
-            game.GameObjects.Add(gameObject);
+            gameObjects.Add(gameObject);
         }
 
         public void Undo()
         {
-            game.GameObjects.Remove(gameObject);
+            gameObjects.Remove(gameObject);
         }
     }
 }

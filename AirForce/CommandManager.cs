@@ -6,36 +6,31 @@ namespace AirForce
 {
     internal class CommandManager
     {
-        private readonly List<List<ICommand>> CommandRosters = new List<List<ICommand>>();
-
-        public void Clear()
-        {
-            CommandRosters.Clear();
-        }
+        private readonly List<List<ICommand>> commandRosters = new List<List<ICommand>>();
 
         public void ExecuteCommand(ICommand command)
         {
-            if (CommandRosters.Count <= 0)
+            if (commandRosters.Count == 0)
                 return;
 
             command.Execute();
-            CommandRosters.Last().Add(command);
+            commandRosters.Last().Add(command);
         }
 
         public void CreateNewRoster()
         {
-            CommandRosters.Add(new List<ICommand>());
+            commandRosters.Add(new List<ICommand>());
         }
 
         public void UndoLastRoster()
         {
-            if (CommandRosters.Count < 1)
+            if (commandRosters.Count == 0)
                 return;
 
-            foreach (ICommand command in CommandRosters.Last())
+            foreach (ICommand command in commandRosters.Last())
                 command.Undo();
 
-            CommandRosters.Remove(CommandRosters.Last());
+            commandRosters.RemoveAt(commandRosters.Count - 1);
         }
     }
 }

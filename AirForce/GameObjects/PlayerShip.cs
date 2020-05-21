@@ -54,7 +54,7 @@ namespace AirForce
 
             if (isPlayerShooting && DelayOfShot <= 0)
             {
-                game.CommandManager.ExecuteCommand(new CommandCreate(game, new PlayerBullet(PositionX + Size / 2, PositionY)));
+                game.CommandManager.ExecuteCommand(new CommandCreate(game.GameObjects, new PlayerBullet(PositionX + Size / 2, PositionY)));
                 ReloadWeapon();
             }
         }

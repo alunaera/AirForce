@@ -1,24 +1,26 @@
-﻿namespace AirForce.Commands
+﻿using System.Collections.Generic;
+
+namespace AirForce.Commands
 {
     internal class CommandDeath : ICommand
     {
-        private readonly Game game;
+        private readonly List<GameObject> gameObjects;
         private readonly GameObject gameObject;
 
-        public CommandDeath(Game game, GameObject gameObject)
+        public CommandDeath(List<GameObject> gameObjects, GameObject gameObject)
         {
-            this.game = game;
+            this.gameObjects = gameObjects;
             this.gameObject = gameObject;
         }
 
         public void Execute()
         {
-            game.GameObjects.Remove(gameObject);
+            gameObjects.Remove(gameObject);
         }
 
         public void Undo()
         {
-            game.GameObjects.Add(gameObject);
+            gameObjects.Add(gameObject);
         }
     }
 }
